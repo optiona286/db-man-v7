@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#0a0a0a"/>
+
+  <!-- Grid lines (subtle) -->
+  <line x1="80" y1="340" x2="432" y2="340" stroke="#1c1c1e" stroke-width="2"/>
+  <line x1="80" y1="260" x2="432" y2="260" stroke="#1c1c1e" stroke-width="2"/>
+  <line x1="80" y1="180" x2="432" y2="180" stroke="#1c1c1e" stroke-width="2"/>
+
+  <!-- Candle 1 — green (down day) -->
+  <line x1="136" y1="155" x2="136" y2="195" stroke="#32d74b" stroke-width="8" stroke-linecap="round"/>
+  <rect x="110" y="195" width="52" height="130" rx="7" fill="#32d74b"/>
+  <line x1="136" y1="325" x2="136" y2="365" stroke="#32d74b" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Candle 2 — red (up day, big) -->
+  <line x1="256" y1="100" x2="256" y2="148" stroke="#ff3b30" stroke-width="8" stroke-linecap="round"/>
+  <rect x="230" y="148" width="52" height="165" rx="7" fill="#ff3b30"/>
+  <line x1="256" y1="313" x2="256" y2="360" stroke="#ff3b30" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Candle 3 — gold (up day) -->
+  <line x1="376" y1="130" x2="376" y2="170" stroke="#f6c445" stroke-width="8" stroke-linecap="round"/>
+  <rect x="350" y="170" width="52" height="145" rx="7" fill="#f6c445"/>
+  <line x1="376" y1="315" x2="376" y2="355" stroke="#f6c445" stroke-width="8" stroke-linecap="round"/>
+</svg>
