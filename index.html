@@ -153,7 +153,23 @@ button{cursor:pointer;}
   -webkit-overflow-scrolling:touch;
   display:none;
 }
-.page.active{display:flex;flex-direction:column;}
+.page.active{
+  display:flex;flex-direction:column;
+  animation:pageIn .22s cubic-bezier(.22,.61,.36,1);
+}
+.page.leaving{
+  display:flex;flex-direction:column;
+  pointer-events:none;
+  animation:pageOut .18s ease forwards;
+}
+@keyframes pageIn{
+  from{opacity:0;transform:translateX(10px);}
+  to{opacity:1;transform:translateX(0);}
+}
+@keyframes pageOut{
+  from{opacity:1;transform:translateX(0);}
+  to{opacity:0;transform:translateX(-10px);}
+}
 
 /* ── PAGE: RANKINGS ── */
 #pgRank{background:var(--bg);}
@@ -915,6 +931,7 @@ button{cursor:pointer;}
   max-height:70vh;overflow-y:auto;
 }
 #filterDrawer.open{transform:translateY(0);}
+#filterDrawer.dragging{transition:none;}
 .drawer-handle{width:36px;height:4px;background:var(--bg5);border-radius:2px;margin:12px auto 14px;}
 .drawer-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:14px;}
 .drawer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;}
@@ -1670,7 +1687,15 @@ const hideOverlay=()=>byId('overlay').classList.remove('show');
 // PAGE NAVIGATION
 // ════════════════════════════════════════════════
 function switchPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  if(activePage===id)return;
+  const prev=activePage?byId(activePage):document.querySelector('.page.active');
+  if(prev&&prev.id!==id){
+    prev.classList.remove('active');
+    prev.classList.add('leaving');
+    setTimeout(()=>prev.classList.remove('leaving'),190);
+  }else{
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  }
   document.querySelectorAll('.nb').forEach((nb,i)=>{
     const ids=['pgRank','pgChart','pgWatch','pgStats','pgSet'];
     nb.classList.toggle('active',ids[i]===id);
@@ -2936,6 +2961,7 @@ function renderSectorDetailChart(container){
 // DISTRIBUTION DETAIL CHART
 // ════════════════════════════════════════════════
 let _distDetailChart=null;
+let distViewMode='bar';
 function renderDistDetailChart(container){
   container.style.cssText='overflow-y:auto;flex:1;display:flex;flex-direction:column;';
   container.innerHTML='';
@@ -2951,13 +2977,18 @@ function renderDistDetailChart(container){
 
   // 摘要列
   const strip=document.createElement('div');
-  strip.style.cssText='display:flex;align-items:center;gap:16px;padding:10px 16px;background:var(--bg1);border-bottom:1px solid var(--brd);flex-shrink:0;font-size:12px;color:var(--txt3);';
-  strip.innerHTML=`共 <b style="color:var(--txt);margin:0 2px">${total}</b> 檔 · 點擊柱狀可查看個股`;
+  strip.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--bg1);border-bottom:1px solid var(--brd);flex-shrink:0;';
+  strip.innerHTML=`
+    <div style="font-size:12px;color:var(--txt3);">共 <b style="color:var(--txt);margin:0 2px">${total}</b> 檔 · 點擊圖形可查看個股</div>
+    <div id="distViewSeg" style="display:inline-flex;gap:4px;background:var(--bg3);border:1px solid var(--brd);border-radius:10px;padding:3px;">
+      <button id="distViewBar" style="border:none;background:none;color:var(--txt2);font-size:11px;font-weight:700;padding:6px 10px;border-radius:7px;">柱狀</button>
+      <button id="distViewPie" style="border:none;background:none;color:var(--txt2);font-size:11px;font-weight:700;padding:6px 10px;border-radius:7px;">圓餅</button>
+    </div>`;
   container.appendChild(strip);
 
   // Chart
   const chartDiv=document.createElement('div');
-  chartDiv.style.cssText='width:100%;height:360px;flex-shrink:0;';
+  chartDiv.style.cssText='width:100%;height:380px;flex-shrink:0;';
   container.appendChild(chartDiv);
 
   if(_distDetailChart){_distDetailChart.dispose();_distDetailChart=null;}
@@ -2967,46 +2998,90 @@ function renderDistDetailChart(container){
   const barColors=['#4a6fa5','#5a82b8','#6a96cb','#7aabde','#8bbff1',
                    '#a0c8f0','#f6c445','#f0a830'];
 
-  _distDetailChart.setOption({
-    backgroundColor:'transparent',
-    grid:{left:44,right:14,top:20,bottom:72},
-    xAxis:{
-      type:'category',
-      data:stats.map(s=>s.range),
-      axisLabel:{color:'#8e8e93',fontSize:10,rotate:30,interval:0},
-      axisLine:{lineStyle:{color:'rgba(255,255,255,.08)'}},
-      axisTick:{show:false},
-    },
-    yAxis:{
-      type:'value',
-      name:'股票數',
-      nameTextStyle:{color:'#8e8e93',fontSize:11},
-      axisLabel:{color:'#8e8e93',fontSize:11},
-      splitLine:{lineStyle:{color:'rgba(255,255,255,.05)'}},
-      axisLine:{show:false},
-    },
-    series:[{
-      type:'bar',
-      data:stats.map((s,i)=>({
-        value:s.count,
-        itemStyle:{color:barColors[i]||'#f6c445',borderRadius:[4,4,0,0]}
-      })),
-      barMaxWidth:40,
-      label:{show:true,position:'top',formatter:p=>p.value>0?p.value:'',color:'#c8c8cc',fontSize:12,fontWeight:600}
-    }],
-    tooltip:{
-      trigger:'item',backgroundColor:'rgba(0,0,0,.92)',borderColor:'rgba(246,196,69,.3)',
-      textStyle:{color:'#e5e7eb',fontSize:12},
-      formatter:p=>{
-        const s=stats[p.dataIndex];
-        const pct=Math.round(s.count/total*100);
-        return `<b>${s.range}</b><br>股票數：<b>${s.count}</b>（${pct}%）`;
-      }
+  function setDistSegActive(mode){
+    const barBtn=byId('distViewBar'),pieBtn=byId('distViewPie');
+    if(!barBtn||!pieBtn)return;
+    const act=(btn,on)=>{btn.style.background=on?'rgba(246,196,69,.16)':'transparent';btn.style.color=on?'var(--acc)':'var(--txt2)';};
+    act(barBtn,mode==='bar');act(pieBtn,mode==='pie');
+  }
+
+  function applyDistChart(mode){
+    distViewMode=mode;
+    setDistSegActive(mode);
+    if(mode==='pie'){
+      _distDetailChart.setOption({
+        backgroundColor:'transparent',
+        tooltip:{
+          trigger:'item',backgroundColor:'rgba(0,0,0,.92)',borderColor:'rgba(246,196,69,.3)',
+          textStyle:{color:'#e5e7eb',fontSize:12},
+          formatter:p=>{
+            const s=stats[p.dataIndex];
+            const pct=Math.round(s.count/total*100);
+            return `<b>${s.range}</b><br>股票數：<b>${s.count}</b>（${pct}%）`;
+          }
+        },
+        series:[{
+          name:'股價分布',
+          type:'pie',
+          radius:['34%','68%'],
+          center:['50%','52%'],
+          padAngle:1,
+          minAngle:2,
+          itemStyle:{borderColor:'rgba(0,0,0,.35)',borderWidth:1},
+          label:{color:'#c8c8cc',fontSize:11,formatter:p=>`${p.name}\n${p.value}`},
+          labelLine:{lineStyle:{color:'rgba(255,255,255,.22)'},length:12,length2:10},
+          data:stats.map((s,i)=>({name:s.range,value:s.count,itemStyle:{color:barColors[i]||'#f6c445'}}))
+        }]
+      },true);
+      return;
     }
-  },true);
+    _distDetailChart.setOption({
+      backgroundColor:'transparent',
+      grid:{left:44,right:14,top:20,bottom:72},
+      xAxis:{
+        type:'category',
+        data:stats.map(s=>s.range),
+        axisLabel:{color:'#8e8e93',fontSize:10,rotate:30,interval:0},
+        axisLine:{lineStyle:{color:'rgba(255,255,255,.08)'}},
+        axisTick:{show:false},
+      },
+      yAxis:{
+        type:'value',
+        name:'股票數',
+        nameTextStyle:{color:'#8e8e93',fontSize:11},
+        axisLabel:{color:'#8e8e93',fontSize:11},
+        splitLine:{lineStyle:{color:'rgba(255,255,255,.05)'}},
+        axisLine:{show:false},
+      },
+      series:[{
+        type:'bar',
+        data:stats.map((s,i)=>({
+          name:s.range,
+          value:s.count,
+          itemStyle:{color:barColors[i]||'#f6c445',borderRadius:[4,4,0,0]}
+        })),
+        barMaxWidth:40,
+        label:{show:true,position:'top',formatter:p=>p.value>0?p.value:'',color:'#c8c8cc',fontSize:12,fontWeight:600}
+      }],
+      tooltip:{
+        trigger:'item',backgroundColor:'rgba(0,0,0,.92)',borderColor:'rgba(246,196,69,.3)',
+        textStyle:{color:'#e5e7eb',fontSize:12},
+        formatter:p=>{
+          const s=stats[p.dataIndex];
+          const pct=Math.round(s.count/total*100);
+          return `<b>${s.range}</b><br>股票數：<b>${s.count}</b>（${pct}%）`;
+        }
+      }
+    },true);
+  }
+
+  applyDistChart(distViewMode==='pie'?'pie':'bar');
+  byId('distViewBar')?.addEventListener('click',()=>applyDistChart('bar'));
+  byId('distViewPie')?.addEventListener('click',()=>applyDistChart('pie'));
 
   _distDetailChart.on('click',p=>{
-    const s=stats[p.dataIndex];
+    const idx=(typeof p.dataIndex==='number')?p.dataIndex:stats.findIndex(s=>s.range===p.name);
+    const s=stats[idx];
     if(!s||!s.count)return;
     openPriceStatsModal(s,rows);
   });
@@ -4074,15 +4149,56 @@ window.addEventListener('keydown',e=>{
   else if(e.key==='ArrowDown'){e.preventDefault();moveSelection(1);}
 });
 
-// Touch swipe to close filter drawer
-document.addEventListener('touchstart',e=>{
-  if(!byId('filterDrawer').classList.contains('open'))return;
-  const target=e.target;
-  if(!byId('filterDrawer').contains(target)){
-    byId('filterDrawer').classList.remove('open');
-    byId('filterToggle').classList.remove('active');
+// Touch gesture to close filter drawer (tap outside + swipe down)
+(function(){
+  const drawer=byId('filterDrawer');
+  const toggle=byId('filterToggle');
+  if(!drawer||!toggle)return;
+  let dragging=false,startY=0,deltaY=0;
+
+  document.addEventListener('touchstart',e=>{
+    if(!drawer.classList.contains('open'))return;
+    const target=e.target;
+    if(!drawer.contains(target)){
+      drawer.classList.remove('open');
+      toggle.classList.remove('active');
+    }
+  });
+
+  drawer.addEventListener('touchstart',e=>{
+    if(!drawer.classList.contains('open'))return;
+    if(e.touches.length!==1)return;
+    const targetTag=(e.target&&e.target.tagName)?e.target.tagName.toUpperCase():'';
+    if(targetTag==='INPUT'||targetTag==='SELECT'||targetTag==='TEXTAREA')return;
+    dragging=true;
+    startY=e.touches[0].clientY;
+    deltaY=0;
+    drawer.classList.add('dragging');
+  },{passive:true});
+
+  drawer.addEventListener('touchmove',e=>{
+    if(!dragging)return;
+    deltaY=Math.max(0,e.touches[0].clientY-startY);
+    drawer.style.transform=`translateY(${deltaY}px)`;
+    if(deltaY>0)e.preventDefault();
+  },{passive:false});
+
+  function finishDrag(){
+    if(!dragging)return;
+    const shouldClose=deltaY>90;
+    dragging=false;
+    drawer.classList.remove('dragging');
+    drawer.style.transform='';
+    if(shouldClose){
+      drawer.classList.remove('open');
+      toggle.classList.remove('active');
+    }
+    deltaY=0;
   }
-});
+
+  drawer.addEventListener('touchend',finishDrag);
+  drawer.addEventListener('touchcancel',finishDrag);
+})();
 
 // When switching to watchlist page, auto-render
 document.querySelectorAll('.nb').forEach((nb,i)=>{
