@@ -2443,7 +2443,6 @@ function renderBoard(type){
             <div class="rr2-sub">${[r.code,r.industry||''].filter(Boolean).join(' · ')}</div>
           </div>
           <div class="rr2-mid-volume">
-            <div class="v-lbl">成交量</div>
             <div class="v-val">${fmtLotsFull(r.volume)}</div>
           </div>
           <div class="rr2-right">
@@ -3831,6 +3830,17 @@ function renderDetailExtras(type){
   }
   colHdr.style.display='flex';
   const col1=byId('dch-col1'), col2=byId('dch-col2');
+  if(isVolBoard){
+    col1.style.minWidth='130px';
+    col1.style.textAlign='center';
+    col2.style.minWidth='52px';
+    col2.style.textAlign='right';
+  }else{
+    col1.style.minWidth='';
+    col1.style.textAlign='right';
+    col2.style.minWidth='';
+    col2.style.textAlign='right';
+  }
 
   // Sort key mapping per board type
   const k1 = (isVol||isVolBoard) ? 'volume' : 'amt';
