@@ -13,6 +13,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
 <script>
@@ -79,6 +80,7 @@ body{
 ::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px;}
 input,select,button{font-family:var(--sans);outline:none;-webkit-appearance:none;appearance:none;}
 button{cursor:pointer;}
+.bi{vertical-align:-0.12em;line-height:1;}
 
 /* ── HEADER ── */
 #hdr{
@@ -298,6 +300,12 @@ button{cursor:pointer;}
 .rr2-pct-row{display:flex;align-items:center;gap:6px;}
 .rr2-pct{font-family:var(--mono);font-size:16px;font-weight:800;line-height:1;}
 .rr2-chg{font-family:var(--mono);font-size:11px;color:var(--txt3);}
+.rr2-mid-volume{
+  min-width:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 8px;gap:3px;
+}
+.rr2-mid-volume .v-lbl{font-size:10px;color:var(--txt3);letter-spacing:.4px;}
+.rr2-mid-volume .v-val{font-family:var(--mono);font-size:18px;font-weight:800;color:var(--acc);line-height:1.1;}
 
 /* % badge (量能類) */
 .rr2-pct-badge{
@@ -596,34 +604,7 @@ button{cursor:pointer;}
 }
 .chart-title{font-size:14px;font-weight:700;color:var(--txt);flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .chart-title .code{color:var(--txt2);font-size:12px;font-family:var(--mono);}
-.mkt-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
-.mkt-badge.twse{background:rgba(255,59,48,.18);color:#ff6b6b;border:1px solid rgba(255,59,48,.3);}
-.mkt-badge.tpex{background:rgba(50,215,75,.15);color:#32d74b;border:1px solid rgba(50,215,75,.3);}
-.mkt-badge.emer{background:rgba(246,196,69,.15);color:var(--acc);border:1px solid rgba(246,196,69,.3);}
 
-/* Company info panel */
-.company-panel{
-  background:var(--bg1);border-bottom:1px solid var(--brd);
-  padding:0;max-height:0;overflow:hidden;transition:max-height .3s ease;flex-shrink:0;
-}
-.company-panel.open{max-height:400px;overflow-y:auto;}
-.company-panel-inner{padding:10px 14px 12px;}
-.cp-toggle{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:6px 14px;background:var(--bg1);border-bottom:1px solid var(--brd2);
-  cursor:pointer;flex-shrink:0;font-size:12px;color:var(--txt3);
-  transition:background .1s;
-}
-.cp-toggle:active{background:var(--bg3);}
-.cp-toggle .arrow{transition:transform .2s;font-size:10px;}
-.cp-toggle .arrow.open{transform:rotate(180deg);}
-.cp-row{display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:1px solid var(--brd2);}
-.cp-row:last-child{border-bottom:none;}
-.cp-lbl{font-size:11px;color:var(--txt3);width:72px;flex-shrink:0;padding-top:1px;}
-.cp-val{font-size:12px;color:var(--txt2);flex:1;line-height:1.5;word-break:break-all;}
-.cp-loading{font-size:12px;color:var(--txt3);text-align:center;padding:14px 0;}
-.cp-tags{display:flex;flex-wrap:wrap;gap:4px;}
-.cp-tag{font-size:10px;padding:2px 7px;border-radius:4px;background:rgba(246,196,69,.1);color:var(--acc);border:1px solid rgba(246,196,69,.2);}
 .tf-seg{display:flex;gap:4px;}
 .tf-btn{
   background:var(--bg3);border:1px solid var(--brd);
@@ -1234,9 +1215,9 @@ button{cursor:pointer;}
       <!-- Ranking list -->
       <div class="rank-list" id="rankList">
         <div class="empty-state" id="rankEmpty">
-          <div class="empty-icon">📊</div>
+          <div class="empty-icon"><i class="bi bi-bar-chart-line"></i></div>
           <div class="empty-title">尚未載入資料</div>
-          <div class="empty-sub">點擊右上角「📂 載入」上傳 .db 檔<br>支援多檔同時選取</div>
+          <div class="empty-sub">點擊右上角「載入」上傳 .db 檔<br>支援多檔同時選取</div>
         </div>
       </div>
     </div><!-- /rankDetail -->
@@ -1249,7 +1230,6 @@ button{cursor:pointer;}
       <div class="chart-title" id="chartTitle">
         <span id="chartName">選擇股票</span>
         <span class="code" id="chartCode"></span>
-        <span id="chartMktBadge"></span>
       </div>
       <div class="tf-seg">
         <button class="tf-btn active" data-tf="D">日</button>
@@ -1263,14 +1243,6 @@ button{cursor:pointer;}
     </div>
     <div class="chart-info" id="chartInfo">
       <div class="ci-row" id="ciRow" style="color:var(--txt3)">選擇股票後顯示 K 線資訊</div>
-    </div>
-    <!-- Company info toggle + panel -->
-    <div class="cp-toggle" id="cpToggle" style="display:none;" onclick="toggleCompanyPanel()">
-      <span>📋 公司基本資料</span>
-      <span class="arrow" id="cpArrow">▼</span>
-    </div>
-    <div class="company-panel" id="companyPanel">
-      <div class="company-panel-inner" id="companyPanelInner"></div>
     </div>
     <div id="kchart" style="position:relative;flex:1;min-height:280px;background:var(--bg);">
     </div>
@@ -1411,7 +1383,7 @@ button{cursor:pointer;}
   <div class="page" id="pgStats">
     <!-- Market Overview -->
     <div class="stats-section" id="statsMarketSection" style="display:none">
-      <div class="stats-title">📊 今日市場概覽</div>
+      <div class="stats-title"><i class="bi bi-speedometer2"></i> 今日市場概覽</div>
       <div class="stats-card">
         <div class="mkt-grid" id="statsMarketCard"></div>
         <div class="mkt-progress">
@@ -1428,7 +1400,7 @@ button{cursor:pointer;}
     </div>
     <!-- Price Change Distribution -->
     <div class="stats-section" id="statsDistSection" style="display:none">
-      <div class="stats-title">📈 漲跌幅分布</div>
+      <div class="stats-title"><i class="bi bi-graph-up-arrow"></i> 漲跌幅分布</div>
       <div class="stats-card">
         <div class="dist-bar-container" id="distBarContainer"></div>
       </div>
@@ -1440,7 +1412,7 @@ button{cursor:pointer;}
     </div>
     <!-- Heatmap -->
     <div class="stats-section" id="statsHeatmapSection" style="display:none;padding-left:0;padding-right:0;">
-      <div class="stats-title" style="padding-left:16px;">🌡 個股成交量排行熱力圖</div>
+      <div class="stats-title" style="padding-left:16px;"><i class="bi bi-activity"></i> 個股成交量排行熱力圖</div>
       <div class="stats-card" style="border-radius:0;border-left:none;border-right:none;overflow:hidden;">
         <div class="heatmap-wrap">
           <div id="heatmapChart"></div>
@@ -1449,14 +1421,14 @@ button{cursor:pointer;}
     </div>
     <!-- Sector Performance Bar Chart -->
     <div class="stats-section" id="statsRadarSection" style="display:none">
-      <div class="stats-title">📊 類股表現排行 <span style="font-size:10px;color:var(--txt3);text-transform:none;letter-spacing:0">(前15類股)</span></div>
+      <div class="stats-title"><i class="bi bi-grid-1x2"></i> 類股表現排行 <span style="font-size:10px;color:var(--txt3);text-transform:none;letter-spacing:0">(前15類股)</span></div>
       <div class="stats-card" style="padding:8px 0 4px;">
         <div id="sectorBarChart"></div>
       </div>
     </div>
     <!-- Empty placeholder -->
     <div class="stats-section" id="statsEmptyPlaceholder">
-      <div class="stats-title">📊 統計</div>
+      <div class="stats-title"><i class="bi bi-bar-chart"></i> 統計</div>
       <div class="stats-card" style="padding:20px;">
         <div class="stats-placeholder">
           載入 .db 資料後自動顯示：<br><br>
@@ -1523,10 +1495,10 @@ button{cursor:pointer;}
 
 <!-- ── DROP ZONE ── -->
 <div id="dropZone">
-  <div class="dz-icon">🗄️</div>
+  <div class="dz-icon"><i class="bi bi-database-up"></i></div>
   <div class="dz-title">離線看盤</div>
   <div class="dz-sub">拖放 .db 到此處<br>或點下方按鈕選取檔案</div>
-  <label class="dz-btn" for="dbFiles">📂 選取 .db 檔案</label>
+  <label class="dz-btn" for="dbFiles"><i class="bi bi-folder2-open"></i> 選取 .db 檔案</label>
 </div>
 
 <script>
@@ -2325,7 +2297,7 @@ function renderBoard(type){
   }
 
   if(!list.length){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">無符合資料</div><div class="empty-sub">請調整篩選條件</div></div>`;
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="bi bi-search"></i></div><div class="empty-title">無符合資料</div><div class="empty-sub">請調整篩選條件</div></div>`;
     return;
   }
 
@@ -2399,21 +2371,39 @@ function renderBoard(type){
       let extraBadge='';
       if(isWM&&r.startDate){
         const period=r.startDate===r.endDate?r.startDate:`${r.startDate}~${r.endDate}`;
-        extraBadge=`<div style="font-size:11px;color:var(--txt3);margin-top:3px;">📅 ${period}</div>`;
+        extraBadge=`<div style="font-size:11px;color:var(--txt3);margin-top:3px;"><i class="bi bi-calendar3"></i> ${period}</div>`;
       }
 
-      row.innerHTML=`
-        <div class="${rankCls}">${idx+1}</div>
-        <div class="rr2-main">
-          <div class="rr2-name">${r.name}${chainBadge}</div>
-          <div class="rr2-sub">${subParts.join(' · ')}</div>
-          ${extraBadge}
-        </div>
-        <div class="rr2-right">
-          <div class="rr2-price">${fmt(r.close)}</div>
-          <div class="rr2-pct ${upCls}">${pctVal}</div>
-          <div class="rr2-chg ${upCls}">${chgVal}</div>
-        </div>`;
+      if(type==='volume'){
+        row.innerHTML=`
+          <div class="${rankCls}">${idx+1}</div>
+          <div class="rr2-main">
+            <div class="rr2-name">${r.name}${chainBadge}</div>
+            <div class="rr2-sub">${[r.code,r.industry||''].filter(Boolean).join(' · ')}</div>
+          </div>
+          <div class="rr2-mid-volume">
+            <div class="v-lbl">成交量</div>
+            <div class="v-val">${fmtLotsFull(r.volume)}</div>
+          </div>
+          <div class="rr2-right">
+            <div class="rr2-price">${fmt(r.close)}</div>
+            <div class="rr2-pct ${upCls}">${pctVal}</div>
+            <div class="rr2-chg ${upCls}">${chgVal}</div>
+          </div>`;
+      }else{
+        row.innerHTML=`
+          <div class="${rankCls}">${idx+1}</div>
+          <div class="rr2-main">
+            <div class="rr2-name">${r.name}${chainBadge}</div>
+            <div class="rr2-sub">${subParts.join(' · ')}</div>
+            ${extraBadge}
+          </div>
+          <div class="rr2-right">
+            <div class="rr2-price">${fmt(r.close)}</div>
+            <div class="rr2-pct ${upCls}">${pctVal}</div>
+            <div class="rr2-chg ${upCls}">${chgVal}</div>
+          </div>`;
+      }
     }
 
     // ── 星號按鈕（加入/移除自選）──
@@ -2455,11 +2445,16 @@ function fmtVol(v){
   if(lots>=1000)return(lots/1000).toFixed(1)+'K張';
   return fmtInt(lots)+'張';
 }
+function fmtLotsFull(v){
+  if(v==null||isNaN(v))return'—';
+  const lots=Math.round(v/1000);
+  return `${fmtInt(lots)}張`;
+}
 
 // ── Sector ranking render ──
 function renderSectorRank(sectors,container){
   if(!sectors||!sectors.length){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">無類股資料</div></div>`;
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="bi bi-search"></i></div><div class="empty-title">無類股資料</div></div>`;
     return;
   }
   sectors.forEach((s,idx)=>{
@@ -2873,7 +2868,7 @@ function renderSectorDetailChart(container){
   container.innerHTML='';
   const rows=(dayRows||[]).filter(r=>!isIndexRow(r));
   if(!rows.length){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">無資料</div></div>`;
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="bi bi-bar-chart-line"></i></div><div class="empty-title">無資料</div></div>`;
     return;
   }
 
@@ -2967,7 +2962,7 @@ function renderDistDetailChart(container){
   container.innerHTML='';
   const rows=(dayRows||[]).filter(r=>!isIndexRow(r));
   if(!rows.length){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">無資料</div></div>`;
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="bi bi-pie-chart"></i></div><div class="empty-title">無資料</div></div>`;
     return;
   }
 
@@ -3514,126 +3509,6 @@ function getMarkerX(){
   return currentDate;
 }
 
-// ════════════════════════════════════════════════
-// TPEx INDUSTRY CHAIN API — 公司基本資料
-// ════════════════════════════════════════════════
-const companyInfoCache=new Map(); // code -> {market, industry_cat, business, products, chains, ...}
-let cpApiRunning=false;
-
-async function fetchCompanyBasic(code){
-  if(companyInfoCache.has(code)) return companyInfoCache.get(code);
-  const info={market:null,industry_cat:null,business:null,products:null,chains:[]};
-  try{
-    // 1) 從 TWSE ISIN 判斷市場別與產業類別
-    const isinUrls=[
-      {url:'https://isin.twse.com.tw/isin/C_public.jsp?strMode=2',market:'上市'},
-      {url:'https://isin.twse.com.tw/isin/C_public.jsp?strMode=4',market:'上櫃'},
-      {url:'https://isin.twse.com.tw/isin/C_public.jsp?strMode=5',market:'興櫃'},
-    ];
-    // Use Anthropic API to fetch and parse
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:2000,
-        tools:[{type:'web_search_20250305',name:'web_search'}],
-        messages:[{role:'user',content:
-          `查詢台灣股票代號 ${code} 的以下資料，用繁體中文回答。\n`+
-          `1. 市場別（上市/上櫃/興櫃）\n`+
-          `2. 產業類別\n`+
-          `3. 主要經營業務（簡短描述）\n`+
-          `4. 主要產品介紹（列出主要產品線）\n`+
-          `5. 所屬產業價值鏈（從 ic.tpex.org.tw 查詢）\n\n`+
-          `回傳格式必須是純JSON，不要markdown：\n`+
-          `{"market":"上市或上櫃或興櫃","industry_cat":"產業類別","business":"主要經營業務描述","products":"產品介紹","chains":["產業鏈名稱1","產業鏈名稱2"]}`
-        }]
-      })
-    });
-    const data=await resp.json();
-    const text=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
-    const match=text.match(/\{[\s\S]*\}/);
-    if(match){
-      const parsed=JSON.parse(match[0]);
-      Object.assign(info,parsed);
-    }
-  }catch(e){
-    console.warn('fetchCompanyBasic error:',e);
-  }
-  companyInfoCache.set(code,info);
-  return info;
-}
-
-function toggleCompanyPanel(){
-  const panel=byId('companyPanel');
-  const arrow=byId('cpArrow');
-  const isOpen=panel.classList.toggle('open');
-  arrow.classList.toggle('open',isOpen);
-}
-
-function renderCompanyPanel(code,info){
-  const inner=byId('companyPanelInner');
-  if(!info||(!info.market&&!info.business&&!info.products)){
-    inner.innerHTML=`<div class="cp-loading">查無公司資料</div>`;
-    return;
-  }
-  let chainsHtml='';
-  if(info.chains&&info.chains.length){
-    chainsHtml=`<div class="cp-row"><div class="cp-lbl">產業鏈</div><div class="cp-val"><div class="cp-tags">${info.chains.map(c=>`<span class="cp-tag">${c}</span>`).join('')}</div></div></div>`;
-  }
-  inner.innerHTML=`
-    ${info.market?`<div class="cp-row"><div class="cp-lbl">市場別</div><div class="cp-val">${info.market}</div></div>`:''}
-    ${info.industry_cat?`<div class="cp-row"><div class="cp-lbl">產業類別</div><div class="cp-val">${info.industry_cat}</div></div>`:''}
-    ${info.business?`<div class="cp-row"><div class="cp-lbl">經營業務</div><div class="cp-val">${info.business}</div></div>`:''}
-    ${info.products?`<div class="cp-row"><div class="cp-lbl">產品介紹</div><div class="cp-val">${info.products}</div></div>`:''}
-    ${chainsHtml}
-  `;
-}
-
-function setMarketBadge(info){
-  const el=byId('chartMktBadge');
-  if(!info||!info.market){el.innerHTML='';return;}
-  const m=info.market;
-  let cls='twse';
-  if(m.includes('櫃'))cls='tpex';
-  else if(m.includes('興'))cls='emer';
-  el.innerHTML=`<span class="mkt-badge ${cls}">${m}</span>`;
-}
-
-async function loadCompanyInfo(code){
-  const toggle=byId('cpToggle');
-  const panel=byId('companyPanel');
-  const inner=byId('companyPanelInner');
-  toggle.style.display='flex';
-  panel.classList.remove('open');
-  byId('cpArrow').classList.remove('open');
-  // Show cached if available
-  if(companyInfoCache.has(code)){
-    const info=companyInfoCache.get(code);
-    setMarketBadge(info);
-    renderCompanyPanel(code,info);
-    return;
-  }
-  // Clear badge & show loading
-  setMarketBadge(null);
-  inner.innerHTML=`<div class="cp-loading">⏳ 正在查詢公司資料...</div>`;
-  if(cpApiRunning)return;
-  cpApiRunning=true;
-  try{
-    const info=await fetchCompanyBasic(code);
-    // Only update if still on same stock
-    if(lastSymbol===code){
-      setMarketBadge(info);
-      renderCompanyPanel(code,info);
-    }
-  }catch(e){
-    if(lastSymbol===code){
-      inner.innerHTML=`<div class="cp-loading">查詢失敗</div>`;
-    }
-  }
-  cpApiRunning=false;
-}
-
 async function fetchSeries(symbol){
   const out=[];
   let limitDate=null;
@@ -3674,8 +3549,6 @@ async function showSymbol(code,name){
   lastSymbol=code;lastName=name;
   byId('chartName').textContent=name;
   byId('chartCode').textContent=code;
-  // Trigger company info fetch (non-blocking)
-  loadCompanyInfo(code);
   const daily=await fetchSeries(code);
   if(!daily.length){showToast('無 K 線資料','err');return;}
   const series=resample(daily,timeframe);
@@ -3752,7 +3625,7 @@ function updateChartInfo(i){
   const chg=prev?d.c-prev.c:0,pct=prev&&prev.c?(d.c/prev.c-1)*100:0;
   const c=chg>=0?'var(--up)':'var(--dn)';
   byId('ciRow').innerHTML=`
-    <span class="ci-item"><span class="lbl">📅</span><span class="val">${dates[i]}</span></span>
+    <span class="ci-item"><span class="lbl"><i class="bi bi-calendar3"></i></span><span class="val">${dates[i]}</span></span>
     <span class="ci-item"><span class="lbl">開</span><span class="val" style="color:${c}">${fmt(d.o)}</span></span>
     <span class="ci-item"><span class="lbl">高</span><span class="val" style="color:${c}">${fmt(d.h)}</span></span>
     <span class="ci-item"><span class="lbl">低</span><span class="val" style="color:${c}">${fmt(d.l)}</span></span>
@@ -3833,7 +3706,7 @@ async function onFilesSelected(files){
   sel.value=currentDate;
   byId('dbStatus').textContent=`${files.length} 個DB · ${allDates.length} 交易日`;
   hideOverlay();
-  showToast(`✅ 載入成功：${allDates.length} 個交易日`,'ok',2500);
+  showToast(`載入成功：${allDates.length} 個交易日`,'ok',2500);
   await loadDay(currentDate);
 }
 
@@ -3887,6 +3760,7 @@ function enterDetail(type){
 
 function renderDetailExtras(type){
   const isVol=['vol_surge','vol_ratio','up3days','up5days','breakout'].includes(type);
+  const isVolBoard=(type==='volume');
   const colHdr=byId('detailColHdr');
 
   // Column header
@@ -3898,9 +3772,9 @@ function renderDetailExtras(type){
   const col1=byId('dch-col1'), col2=byId('dch-col2');
 
   // Sort key mapping per board type
-  const k1 = isVol ? 'volume' : 'amt';
+  const k1 = (isVol||isVolBoard) ? 'volume' : 'amt';
   const k2 = isVol ? 'volChg' : 'pct';
-  const lbl1 = isVol ? '今量' : '成交';
+  const lbl1 = isVol ? '今量' : (isVolBoard ? '成交量(張)' : '成交');
   const lbl2 = isVol ? '倍率' : '漲%';
 
   // col2 is the default sort (when sortState.key===null)
@@ -4023,14 +3897,14 @@ byId('watchAddBtn').addEventListener('click',async()=>{
   const codes=loadWatchlistCodes();
   if(!codes.includes(lastSymbol))codes.push(lastSymbol);
   saveWatchlistCodes(codes);watchlistRows=[];watchlistKey=null;
-  updateWatchButtons();showToast('⭐ 已加入自選股','ok');
+  updateWatchButtons();showToast('已加入自選股','ok');
   if(activePage==='pgWatch')renderWatchlist();
 });
 byId('watchRemoveBtn').addEventListener('click',async()=>{
   if(!lastSymbol)return;
   const codes=loadWatchlistCodes().filter(c=>c!==lastSymbol);
   saveWatchlistCodes(codes);watchlistRows=[];watchlistKey=null;
-  updateWatchButtons();showToast('🗑 已移除','');
+  updateWatchButtons();showToast('已移除','');
   if(activePage==='pgWatch')renderWatchlist();
 });
 byId('watchClearBtn').addEventListener('click',async()=>{
@@ -4136,7 +4010,7 @@ async function tryLoadChainDB(dbObj){
       chainSubMap.get(code).push({i:ind,s:sub});
     });
     chainLoaded=true;
-    showToast(`✅ 產業鏈資料載入：${chainMap.size} 檔`,  'ok', 2000);
+    showToast(`產業鏈資料載入：${chainMap.size} 檔`,  'ok', 2000);
     return true;
   }catch(e){return false;}
 }
