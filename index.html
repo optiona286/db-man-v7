@@ -57,7 +57,7 @@
   --r8:      8px;
   --r12:     12px;
   --r16:     16px;
-  --nav-h:   62px;
+  --nav-h:   72px;
   --hdr-h:   52px;
   --safe-t:  env(safe-area-inset-top,0px);
   --safe-b:  env(safe-area-inset-bottom,0px);
@@ -106,7 +106,8 @@ button{cursor:pointer;}
 .hdr-btn{
   background:var(--bg3);border:1px solid var(--brd);
   color:var(--txt);border-radius:var(--r8);
-  padding:7px 10px;font-size:11px;font-weight:600;
+  min-height:44px;
+  padding:10px 12px;font-size:12px;font-weight:700;
   white-space:nowrap;
   transition:background .12s;
 }
@@ -128,7 +129,8 @@ button{cursor:pointer;}
   flex:1;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:3px;
   color:var(--txt3);border:none;background:none;
-  font-family:var(--sans);padding-top:6px;
+  font-family:var(--sans);padding-top:8px;
+  min-height:52px;
   position:relative;transition:color .15s;
 }
 .nb.active{color:var(--acc);}
@@ -136,8 +138,8 @@ button{cursor:pointer;}
   content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
   width:28px;height:2px;background:var(--acc);border-radius:0 0 2px 2px;
 }
-.nb svg{width:20px;height:20px;}
-.nb span{font-size:9px;font-weight:700;letter-spacing:.3px;}
+.nb svg{width:22px;height:22px;}
+.nb span{font-size:11px;font-weight:700;letter-spacing:.3px;}
 
 /* ── APP AREA ── */
 #app{
@@ -243,24 +245,6 @@ button{cursor:pointer;}
 }
 .detail-en-title{font-size:11px;font-weight:400;color:var(--txt3);letter-spacing:.5px;}
 
-/* Stats bar (紅綠類) */
-.detail-stats-bar{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  flex-shrink:0;background:var(--bg1);
-  border-bottom:1px solid var(--brd);
-}
-.dsb-cell{
-  padding:10px 6px;text-align:center;
-  border-right:1px solid var(--brd2);
-}
-.dsb-cell:last-child{border-right:none;}
-.dsb-val{font-size:20px;font-weight:800;font-family:var(--mono);line-height:1;}
-.dsb-lbl{font-size:10px;color:var(--txt3);margin-top:3px;letter-spacing:.5px;}
-.dsb-up .dsb-val{color:var(--up);}
-.dsb-dn .dsb-val{color:var(--dn);}
-.dsb-flat .dsb-val{color:var(--txt3);}
-.dsb-limit .dsb-val{color:var(--acc);}
-
 /* Column header */
 .detail-col-hdr{
   display:flex;align-items:center;
@@ -331,7 +315,7 @@ button{cursor:pointer;}
 .filter-bar input,.filter-bar select{
   background:var(--bg3);border:1px solid var(--brd);
   color:var(--txt);border-radius:var(--r8);
-  padding:7px 10px;font-size:12px;height:34px;
+  padding:9px 12px;font-size:13px;height:42px;
   flex-shrink:0;
 }
 .filter-bar input{min-width:0;}
@@ -340,8 +324,8 @@ button{cursor:pointer;}
 #searchBox{flex:1;min-width:100px;}
 .filter-toggle{
   background:var(--bg3);border:1px solid var(--brd);color:var(--txt2);
-  border-radius:var(--r8);padding:7px 10px;font-size:12px;
-  white-space:nowrap;flex-shrink:0;height:34px;
+  border-radius:var(--r8);padding:9px 12px;font-size:13px;
+  white-space:nowrap;flex-shrink:0;height:42px;
   display:flex;align-items:center;
 }
 .filter-toggle.active{border-color:rgba(246,196,69,.4);color:var(--acc);}
@@ -628,14 +612,16 @@ button{cursor:pointer;}
 .tf-btn{
   background:var(--bg3);border:1px solid var(--brd);
   color:var(--txt2);border-radius:var(--r8);
-  padding:6px 12px;font-size:12px;font-weight:600;
+  min-height:40px;
+  padding:8px 14px;font-size:13px;font-weight:700;
 }
 .tf-btn.active{background:rgba(246,196,69,.14);border-color:rgba(246,196,69,.4);color:var(--acc);}
 .chart-nav{display:flex;gap:6px;}
 .chart-nav button{
   background:var(--bg3);border:1px solid var(--brd);
   color:var(--txt2);border-radius:var(--r8);
-  padding:6px 12px;font-size:12px;font-weight:600;
+  min-height:40px;
+  padding:8px 14px;font-size:13px;font-weight:700;
 }
 .chart-nav button:active{background:var(--bg5);}
 
@@ -1030,7 +1016,7 @@ button{cursor:pointer;}
   <div class="hdr-logo">看盤<em>PRO</em></div>
   <div class="hdr-status" id="dbStatus">尚未載入資料庫</div>
   <div class="hdr-actions">
-    <select id="dateSelect" class="hdr-btn" disabled style="padding:6px 8px;font-size:11px;"></select>
+    <select id="dateSelect" class="hdr-btn" disabled></select>
     <label class="hdr-btn acc" for="dbFiles"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>載入</label>
     <input type="file" id="dbFiles" accept=".db" multiple>
   </div>
@@ -1205,13 +1191,6 @@ button{cursor:pointer;}
             <span class="detail-en-title" id="detailTitleEn"></span>
           </div>
         </div>
-      </div>
-      <!-- Stats bar (紅綠類) -->
-      <div class="detail-stats-bar" id="detailStatsBar" style="display:none">
-        <div class="dsb-cell dsb-up"><div class="dsb-val" id="dsb-up">--</div><div class="dsb-lbl">上漲</div></div>
-        <div class="dsb-cell dsb-dn"><div class="dsb-val" id="dsb-dn">--</div><div class="dsb-lbl">下跌</div></div>
-        <div class="dsb-cell dsb-flat"><div class="dsb-val" id="dsb-flat">--</div><div class="dsb-lbl">平盤</div></div>
-        <div class="dsb-cell dsb-limit"><div class="dsb-val" id="dsb-limit">--</div><div class="dsb-lbl">漲停</div></div>
       </div>
       <!-- Column header -->
       <div class="detail-col-hdr" id="detailColHdr" style="display:none">
@@ -3824,7 +3803,7 @@ function enterDetail(type){
   // Title
   byId('detailTitleMain').textContent=HUB_LABELS[type]||type;
   byId('detailTitleEn').textContent=HUB_EN[type]||'';
-  // Stats bar & col header
+  // Column header
   renderDetailExtras(type);
   if(type==='weekly')ensureAgg('weekly').then(()=>renderBoard(type));
   else if(type==='monthly')ensureAgg('monthly').then(()=>renderBoard(type));
@@ -3832,27 +3811,8 @@ function enterDetail(type){
 }
 
 function renderDetailExtras(type){
-  const isRedGreen=['gainers','losers','limitup','volume','value'].includes(type);
   const isVol=['vol_surge','vol_ratio','up3days','up5days','breakout'].includes(type);
-  const statsBar=byId('detailStatsBar');
   const colHdr=byId('detailColHdr');
-
-  // Stats bar (only for 紅綠類)
-  if(isRedGreen){
-    statsBar.style.display='grid';
-    const rows=(dayRows||[]).filter(r=>!isIndexRow(r));
-    const L=dynamicLimit(currentDate)-0.1;
-    const up=rows.filter(r=>(r.pct??0)>0).length;
-    const dn=rows.filter(r=>(r.pct??0)<0).length;
-    const flat=rows.filter(r=>(r.pct??0)===0).length;
-    const lim=rows.filter(r=>(r.pct??-999)>=L).length;
-    byId('dsb-up').textContent=up;
-    byId('dsb-dn').textContent=dn;
-    byId('dsb-flat').textContent=flat;
-    byId('dsb-limit').textContent=lim;
-  }else{
-    statsBar.style.display='none';
-  }
 
   // Column header
   if(type==='price_stats'||type==='sector_rank'){
