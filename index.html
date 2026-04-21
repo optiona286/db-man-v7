@@ -670,22 +670,215 @@ button{cursor:pointer;}
 
 /* ── PAGE: WATCHLIST ── */
 #pgWatch{background:var(--bg);}
+
+/* Header */
+.watch-hdr{
+  padding:8px 14px 10px;
+  background:var(--bg1);border-bottom:1px solid var(--brd);
+  flex-shrink:0;
+}
+.watch-hdr-bc{font-size:11px;color:var(--txt3);margin-bottom:5px;}
+.watch-hdr-row{display:flex;align-items:baseline;gap:8px;}
+.watch-hdr-title{font-size:22px;font-weight:800;color:var(--txt);}
+.watch-hdr-en{font-size:11px;font-weight:400;color:var(--txt3);letter-spacing:.5px;}
+
+/* TF bar */
+.wl-tf-bar{
+  display:flex;gap:6px;padding:8px 14px;
+  background:var(--bg1);border-bottom:1px solid var(--brd);
+  flex-shrink:0;
+}
+.wl-tf-btn{
+  flex:1;padding:7px 4px;border-radius:var(--r8);
+  background:var(--bg3);border:1px solid var(--brd);
+  color:var(--txt3);font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  transition:.12s;
+}
+.wl-tf-btn.active{background:rgba(246,196,69,.12);border-color:rgba(246,196,69,.4);color:var(--acc);}
+
+/* Action bar */
 .watch-actions{
-  display:flex;gap:8px;padding:10px 12px;
+  display:flex;gap:6px;padding:8px 14px;
   background:var(--bg1);border-bottom:1px solid var(--brd);
   flex-shrink:0;
 }
 .w-btn{
-  flex:1;padding:10px;border-radius:var(--r8);
-  background:var(--bg3);border:1px solid var(--brd);
-  color:var(--txt);font-size:12px;font-weight:600;
-  transition:.1s;
+  flex:1;padding:9px 6px;border-radius:var(--r8);
+  background:transparent;border:1px solid var(--brd);
+  color:var(--txt3);font-size:12px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  transition:opacity .1s;
 }
-.w-btn:active{background:var(--bg5);}
-.w-btn.add{border-color:rgba(255,59,48,.4);color:var(--up);}
+.w-btn:active{opacity:.55;}
+.w-btn.add{border-color:rgba(255,59,48,.35);color:var(--up);}
 .w-btn.remove{border-color:rgba(50,215,75,.3);color:var(--dn);}
 .w-btn.clear{color:var(--txt3);}
-.w-btn:disabled{opacity:.35;pointer-events:none;}
+.w-btn:disabled{opacity:.3;pointer-events:none;}
+
+/* Auto info strip */
+#watchAutoInfo{
+  padding:8px 14px;
+  background:rgba(246,196,69,.05);
+  border-bottom:1px solid rgba(246,196,69,.12);
+  font-size:12px;color:var(--txt3);
+  display:flex;align-items:center;gap:6px;
+  flex-shrink:0;
+}
+
+/* Scan management bar */
+.wt-scan-bar{
+  background:var(--bg1);border-bottom:1px solid var(--brd);flex-shrink:0;
+}
+.wt-scan-hdr{
+  display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.wt-scan-hdr-label{flex:1;font-size:13px;font-weight:600;color:var(--txt2);}
+.wt-scan-now-btn{
+  font-size:12px;font-weight:700;padding:6px 13px;
+  border-radius:8px;border:1px solid rgba(246,196,69,.4);
+  background:rgba(246,196,69,.1);color:var(--acc);
+  cursor:pointer;flex-shrink:0;white-space:nowrap;
+  transition:opacity .1s;
+}
+.wt-scan-now-btn:active{opacity:.6;}
+.wt-scan-toggle{font-size:11px;color:var(--txt3);margin-left:2px;flex-shrink:0;}
+.wt-scan-list{overflow:hidden;}
+.wt-scan-list.collapsed{display:none;}
+.wt-scan-item{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 14px 9px 20px;border-top:1px solid var(--brd2);
+}
+.wt-scan-date-lbl{flex:1;font-size:13px;color:var(--txt);font-family:var(--mono);}
+.wt-scan-cnt{font-size:12px;color:var(--txt3);flex-shrink:0;}
+.wt-scan-del{
+  background:none;border:none;color:var(--txt3);opacity:.35;
+  padding:4px 8px;font-size:18px;cursor:pointer;line-height:1;flex-shrink:0;
+}
+.wt-scan-del:active{opacity:1;color:var(--up);}
+.wt-scan-no-date{padding:12px 20px;font-size:13px;color:var(--txt3);}
+
+/* ── WATCHLIST NEW TRACKING SYSTEM ── */
+.wt-ctrl-bar{
+  display:flex;align-items:center;gap:8px;padding:9px 14px;
+  background:var(--bg1);border-bottom:1px solid var(--brd);flex-shrink:0;
+}
+.wt-ctrl-label{font-size:12px;color:var(--txt3);}
+.wt-ctrl-bar select{
+  background:var(--bg3);border:1px solid var(--brd);color:var(--txt);
+  border-radius:var(--r8);padding:6px 10px;font-size:13px;
+}
+.wt-tabs{
+  display:flex;border-bottom:1px solid var(--brd);
+  background:var(--bg1);flex-shrink:0;
+}
+.wt-tab-btn{
+  flex:1;padding:11px 4px;background:none;border:none;
+  font-size:13px;font-weight:700;color:var(--txt3);
+  border-bottom:2px solid transparent;transition:.12s;
+}
+.wt-tab-btn.active{color:var(--acc);border-bottom-color:var(--acc);}
+.wt-tab-count{
+  display:inline-block;min-width:18px;height:17px;line-height:17px;
+  background:var(--bg3);border-radius:9px;font-size:11px;
+  padding:0 5px;margin-left:4px;color:var(--txt3);
+}
+.wt-tab-btn.active .wt-tab-count{background:rgba(246,196,69,.2);color:var(--acc);}
+
+/* Tracking row */
+.wt-row{
+  display:flex;align-items:center;gap:0;
+  padding:14px 14px 12px;border-bottom:1px solid var(--brd2);cursor:pointer;
+  transition:background .08s;
+}
+.wt-row:active{background:rgba(246,196,69,.04);}
+.wt-row.selected{background:rgba(255,59,48,.07);border-left:3px solid var(--up);}
+.wt-left{display:flex;flex-direction:column;align-items:center;justify-content:center;width:38px;flex-shrink:0;gap:4px;}
+.wt-streak{font-family:var(--mono);font-size:12px;font-weight:800;color:var(--txt3);}
+.wt-streak.hot{color:#ff9f0a;}
+.wt-streak.hot2{color:var(--up);}
+.wt-sbadge{font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:.3px;}
+.wt-sbadge.new{background:rgba(246,196,69,.2);color:var(--acc);}
+.wt-sbadge.manual{background:rgba(255,159,10,.2);color:#ff9f0a;}
+.wt-main{flex:1;min-width:0;padding:0 10px;}
+.wt-name{font-size:16px;font-weight:700;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.wt-sub{font-size:12px;color:var(--txt3);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.wt-right{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:3px;}
+.wt-price{font-family:var(--mono);font-size:17px;font-weight:600;color:var(--txt);}
+.wt-pct{font-family:var(--mono);font-size:15px;font-weight:800;}
+.wt-chg{font-family:var(--mono);font-size:11px;color:var(--txt3);}
+
+/* Eliminated row */
+.wt-elim-row{
+  display:flex;align-items:center;gap:0;
+  padding:13px 14px;border-bottom:1px solid var(--brd2);
+  cursor:pointer;transition:background .08s;
+}
+.wt-elim-row:active{background:rgba(246,196,69,.04);}
+.wt-elim-left{display:flex;flex-direction:column;align-items:center;width:38px;flex-shrink:0;gap:3px;}
+.wt-elim-ago{font-size:11px;color:var(--txt3);font-weight:700;}
+.wt-elim-dot{width:6px;height:6px;border-radius:50%;background:var(--txt3);opacity:.4;}
+.wt-elim-main{flex:1;min-width:0;padding:0 10px;}
+.wt-elim-name{font-size:16px;font-weight:700;color:var(--txt2);}
+.wt-elim-sub{font-size:12px;color:var(--txt3);margin-top:3px;}
+.wt-elim-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.wt-addback-btn{
+  font-size:13px;font-weight:700;padding:6px 13px;
+  border-radius:8px;border:1px solid rgba(246,196,69,.4);
+  background:rgba(246,196,69,.08);color:var(--acc);
+  cursor:pointer;white-space:nowrap;transition:opacity .1s;
+}
+.wt-addback-btn:active{opacity:.6;}
+
+/* History row */
+.wt-hist-row{
+  display:flex;align-items:center;gap:0;
+  padding:13px 14px;border-bottom:1px solid var(--brd2);cursor:pointer;
+}
+.wt-hist-row:active{background:rgba(246,196,69,.04);}
+.wt-hist-main{flex:1;min-width:0;}
+.wt-hist-name{font-size:15px;font-weight:700;color:var(--txt2);}
+.wt-hist-sub{font-size:12px;color:var(--txt3);margin-top:3px;}
+.wt-hist-right{flex-shrink:0;text-align:right;padding-left:12px;}
+.wt-hist-period{font-size:11px;color:var(--txt3);margin-bottom:4px;}
+.wt-hist-reason{font-size:11px;padding:3px 8px;border-radius:4px;}
+.wt-hist-reason.elim{background:var(--bg3);color:var(--txt3);}
+.wt-hist-reason.removed{background:rgba(50,215,75,.08);color:var(--dn);}
+
+/* Section empty */
+.wt-empty{padding:44px 20px;text-align:center;color:var(--txt3);font-size:14px;line-height:1.6;}
+.wt-empty svg{opacity:.25;margin-bottom:12px;}
+
+/* CSV button */
+.wt-csv-btn{
+  display:flex;align-items:center;gap:6px;
+  margin:12px 14px;padding:11px 16px;
+  border-radius:var(--r8);border:1px solid var(--brd);
+  background:var(--bg2);color:var(--txt3);font-size:13px;font-weight:600;
+  cursor:pointer;transition:opacity .1s;
+}
+.wt-csv-btn:active{opacity:.6;}
+
+/* Inline row buttons */
+.rr2-star-btn,.rr2-rm-btn{
+  flex-shrink:0;padding:10px 8px;background:none;border:none;
+  cursor:pointer;display:flex;align-items:center;transition:opacity .12s,color .12s;
+}
+.rr2-star-btn{color:var(--txt3);opacity:.35;}
+.rr2-star-btn.on{color:var(--acc);opacity:1;}
+.rr2-star-btn:active,.rr2-rm-btn:active{opacity:.6;}
+.rr2-rm-btn{color:var(--txt3);opacity:.3;}
+.rr2-rm-btn:active{color:var(--dn);opacity:1;}
+
+/* Momentum badges */
+.dyn-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;border-radius:4px;padding:2px 6px;font-weight:700;flex-shrink:0;
+}
+.dyn-badge.both{background:rgba(246,196,69,.15);color:var(--acc);}
+.dyn-badge.price{background:rgba(255,59,48,.12);color:var(--up);}
+.dyn-badge.vol{background:rgba(0,191,255,.1);color:#00bfff;}
 
 /* ── PAGE: SETTINGS ── */
 #pgSet{background:var(--bg);padding-bottom:20px;}
@@ -803,18 +996,6 @@ button{cursor:pointer;}
 }
 
 /* ── WATCHLIST PAGE RANK ROWS ── */
-.wl-tf-bar{
-  display:flex;gap:6px;padding:8px 12px;
-  background:var(--bg1);border-bottom:1px solid var(--brd);
-  flex-shrink:0;
-}
-.wl-tf-btn{
-  flex:1;padding:8px;border-radius:var(--r8);
-  background:var(--bg3);border:1px solid var(--brd);
-  color:var(--txt2);font-size:12px;font-weight:700;
-  text-align:center;transition:.12s;
-}
-.wl-tf-btn.active{background:rgba(246,196,69,.12);border-color:rgba(246,196,69,.4);color:var(--acc);}
 
 /* ── FLOATING K-LINE NAV BUTTONS ── */
 #floatNav{
@@ -1113,25 +1294,53 @@ button{cursor:pointer;}
 
   <!-- ═══ PAGE: WATCHLIST ═══ -->
   <div class="page" id="pgWatch">
-    <div class="watch-actions">
-      <button class="w-btn add" id="watchAddBtn" disabled><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>加入</button>
-      <button class="w-btn remove" id="watchRemoveBtn" disabled><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>移除</button>
-      <button class="w-btn clear" id="watchClearBtn" disabled>清空</button>
+    <!-- Header -->
+    <div class="watch-hdr">
+      <div class="watch-hdr-bc">自選</div>
+      <div class="watch-hdr-row" style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <span class="watch-hdr-title">自選追蹤</span>
+          <span class="watch-hdr-en">WATCHLIST</span>
+        </div>
+        <button class="w-btn clear" id="watchClearBtn" disabled style="flex:none;padding:7px 14px;font-size:12px;">清空</button>
+      </div>
     </div>
-    <div class="wl-tf-bar">
-      <button class="wl-tf-btn active" data-wtf="D">日線動能</button>
-      <button class="wl-tf-btn" data-wtf="W">週線動能</button>
-      <button class="wl-tf-btn" data-wtf="M">月線動能</button>
-      <button class="wl-tf-btn" data-wtf="AUTO" style="color:#f6c445;border-color:rgba(246,196,69,.3)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>自動選股</button>
+    <!-- Hidden (kept for event listeners) -->
+    <button id="watchAddBtn" style="display:none"></button>
+    <button id="watchRemoveBtn" style="display:none"></button>
+    <div id="watchAutoInfo" style="display:none"></div>
+    <!-- Scan management bar -->
+    <div class="wt-scan-bar" id="wtScanBar">
+      <div class="wt-scan-hdr" onclick="wtToggleScanBar()">
+        <span class="wt-scan-hdr-label" id="wtScanHdrLabel">掃描管理（0 個日期）</span>
+        <button class="wt-scan-now-btn" onclick="event.stopPropagation();wtScanNow()">掃描當前日期</button>
+        <span class="wt-scan-toggle" id="wtScanToggleIcon">▼</span>
+      </div>
+      <div class="wt-scan-list collapsed" id="wtScanList"></div>
     </div>
-    <div id="watchAutoInfo" style="display:none;padding:8px 14px;background:rgba(246,196,69,.06);border-bottom:1px solid rgba(246,196,69,.15);font-size:12px;color:var(--txt3);flex-shrink:0;">
-      ⚡ 自動動能選股：從全市場依量價動能分數自動篩選前50名
+    <!-- Top N control -->
+    <div class="wt-ctrl-bar">
+      <span class="wt-ctrl-label">每日選股前</span>
+      <select id="wtTopNSel">
+        <option value="20">20 名</option>
+        <option value="30" selected>30 名</option>
+        <option value="50">50 名</option>
+        <option value="100">100 名</option>
+      </select>
+      <span class="wt-ctrl-label" style="margin-left:auto;font-size:10px;" id="wtLastScanLabel"></span>
     </div>
+    <!-- Tabs -->
+    <div class="wt-tabs">
+      <button class="wt-tab-btn active" data-tab="tracking">追蹤中<span class="wt-tab-count" id="wt-cnt-tracking">0</span></button>
+      <button class="wt-tab-btn" data-tab="review">淘汰審查<span class="wt-tab-count" id="wt-cnt-review">0</span></button>
+      <button class="wt-tab-btn" data-tab="history">歷史紀錄<span class="wt-tab-count" id="wt-cnt-history">0</span></button>
+    </div>
+    <!-- List -->
     <div class="rank-list" id="watchList">
       <div class="empty-state">
-        <div class="empty-icon">⭐</div>
+        <div class="empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.35"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
         <div class="empty-title">自選股為空</div>
-        <div class="empty-sub">在排行榜點選股票後<br>點「⭐ 加入」加到自選股</div>
+        <div class="empty-sub">在排行榜點選股票後<br>點「加入自選」加到追蹤名單</div>
       </div>
     </div>
   </div>
@@ -2203,6 +2412,24 @@ function renderBoard(type){
         </div>`;
     }
 
+    // ── 星號按鈕（加入/移除自選）──
+    if(!isVolType){
+      const sb=document.createElement('button');
+      sb.className='rr2-star-btn'+(isWatchlisted(r.code)?' on':'');
+      sb.innerHTML=`<svg width="15" height="15" viewBox="0 0 24 24" fill="${isWatchlisted(r.code)?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+      sb.addEventListener('click',e=>{
+        e.stopPropagation();
+        const code=String(r.code).trim();
+        const codes=loadWatchlistCodes();
+        const isIn=codes.includes(code);
+        if(isIn){saveWatchlistCodes(codes.filter(c=>c!==code));sb.classList.remove('on');sb.querySelector('svg').setAttribute('fill','none');showToast('已移除自選股');}
+        else{saveWatchlistCodes([...codes,code]);sb.classList.add('on');sb.querySelector('svg').setAttribute('fill','currentColor');showToast('已加入自選股','ok');}
+        watchlistRows=[];watchlistKey=null;
+        updateWatchButtons();
+        if(activePage==='pgWatch')renderWatchlist();
+      });
+      row.appendChild(sb);
+    }
     row.addEventListener('click',()=>{
       currentRowIndex=idx;
       lastSymbol=r.code;lastName=r.name;
@@ -2807,95 +3034,379 @@ function renderDistDetailChart(container){
 }
 
 // ════════════════════════════════════════════════
+// WATCHLIST TRACKING SYSTEM
+// ════════════════════════════════════════════════
+const WT_KEY='wt_data_v1';
+let wtActiveTab='tracking';
+let wtTopN=30;
+
+function loadWtData(){
+  try{const r=localStorage.getItem(WT_KEY);return r?JSON.parse(r):{scans:{},tracks:{}};}
+  catch(e){return{scans:{},tracks:{}};}
+}
+function saveWtData(d){localStorage.setItem(WT_KEY,JSON.stringify(d));}
+
+// Run scan for a date, update tracking statuses
+function wtRunScan(dateStr,rows,force){
+  if(!dateStr||!rows||!rows.length)return;
+  const data=loadWtData();
+  const N=wtTopN;
+
+  // 1. Auto-select top N by dynScore
+  const eligible=rows.filter(r=>!isIndexRow(r)&&r.volume>0&&r.pct!=null&&!isNaN(r.pct));
+  const scored=eligible.map(r=>{const{score}=computeDynScore(r);return{...r,_score:score};});
+  scored.sort((a,b)=>b._score-a._score);
+  const topCodes=scored.slice(0,N).map(r=>String(r.code).trim());
+
+  // If already scanned this date, skip (unless forced)
+  if(!force&&data.scans[dateStr])return;
+  data.scans[dateStr]=topCodes;
+
+  // 2. Find most recent previous scan
+  const prevDates=Object.keys(data.scans).filter(d=>d<dateStr).sort();
+  const prevCodes=prevDates.length?new Set(data.scans[prevDates[prevDates.length-1]]):(new Set());
+
+  // 3. Update statuses
+  const rowMap=new Map(rows.map(r=>[String(r.code).trim(),r]));
+
+  // Process current scan entries
+  for(const code of topCodes){
+    const r=rowMap.get(code);
+    const name=r?r.name:code;
+    const score=r?(computeDynScore(r).score):0;
+    const existing=data.tracks[code];
+    if(!existing||existing.status==='eliminated'){
+      data.tracks[code]={
+        code,name,status:'new',streak:1,
+        firstSeen:dateStr,lastSeen:dateStr,
+        manualLock:false,
+        eliminatedDate:null,
+        history:[{date:dateStr,status:'new',score}]
+      };
+    } else {
+      // Was new/active/manual — continue
+      existing.status=existing.status==='manual'?'active':'active';
+      existing.manualLock=false;
+      existing.streak=(existing.streak||0)+1;
+      existing.lastSeen=dateStr;
+      existing.history.push({date:dateStr,status:'active',score});
+    }
+  }
+
+  // Process active/new/manual tracks NOT in current scan
+  const topSet=new Set(topCodes);
+  for(const code of Object.keys(data.tracks)){
+    const t=data.tracks[code];
+    if(['new','active','manual'].includes(t.status)&&!topSet.has(code)){
+      if(t.manualLock){
+        t.streak=(t.streak||0)+1;
+        t.history.push({date:dateStr,status:'manual',score:null});
+      } else {
+        t.status='eliminated';
+        t.eliminatedDate=dateStr;
+        t.history.push({date:dateStr,status:'eliminated',score:null});
+      }
+    }
+  }
+
+  saveWtData(data);
+}
+
+// Manual add-back (set manualLock)
+function wtAddBack(code){
+  const data=loadWtData();
+  if(!data.tracks[code])return;
+  data.tracks[code].status='manual';
+  data.tracks[code].manualLock=true;
+  data.tracks[code].eliminatedDate=null;
+  saveWtData(data);
+  renderWatchlist();
+  showToast('已加回追蹤','ok');
+}
+
+// Manual remove from tracking
+function wtRemoveTrack(code){
+  const data=loadWtData();
+  if(!data.tracks[code])return;
+  data.tracks[code].status='removed';
+  data.tracks[code].eliminatedDate=currentDate;
+  saveWtData(data);
+  renderWatchlist();
+  showToast('已移出追蹤');
+}
+
+// Export history as CSV
+function wtExportCSV(){
+  const data=loadWtData();
+  const rows=[['代號','名稱','首次入選','最後入選','最長連續天數','離場原因']];
+  for(const t of Object.values(data.tracks)){
+    if(t.status==='new'||t.status==='active'||t.status==='manual')continue;
+    const maxStreak=t.history.filter(h=>h.status!=='eliminated'&&h.status!=='removed').length;
+    rows.push([t.code,t.name,t.firstSeen,t.lastSeen,maxStreak,t.status==='removed'?'手動移除':'系統淘汰']);
+  }
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download=`watchlist_history_${currentDate||'export'}.csv`;
+  a.click();
+}
+
+// ── Scan management ──────────────────────────────
+let wtScanBarOpen=false;
+
+function wtToggleScanBar(){
+  wtScanBarOpen=!wtScanBarOpen;
+  const list=byId('wtScanList');
+  const icon=byId('wtScanToggleIcon');
+  if(list)list.classList.toggle('collapsed',!wtScanBarOpen);
+  if(icon)icon.textContent=wtScanBarOpen?'▲':'▼';
+  if(wtScanBarOpen)renderScanBar();
+}
+
+function wtScanNow(){
+  if(!currentDate){showToast('請先載入日期資料','err');return;}
+  if(!dayRows||!dayRows.length){showToast('當前日期無資料','err');return;}
+  const data=loadWtData();
+  if(data.scans[currentDate]){
+    showToast('此日期已掃描，請先刪除再重新掃描');
+    return;
+  }
+  wtRunScan(currentDate,dayRows);
+  renderScanBar();
+  renderWatchlist();
+  showToast('掃描完成：'+currentDate,'ok');
+}
+
+function wtDeleteScan(dateStr){
+  const data=loadWtData();
+  if(!data.scans[dateStr])return;
+  delete data.scans[dateStr];
+  // Remove history entries for this date and fix affected tracks
+  for(const code of Object.keys(data.tracks)){
+    const t=data.tracks[code];
+    if(t.history)t.history=t.history.filter(h=>h.date!==dateStr);
+    if(t.eliminatedDate===dateStr){
+      const lastActive=(t.history||[]).filter(h=>['new','active','manual'].includes(h.status));
+      if(lastActive.length){
+        t.status=lastActive[lastActive.length-1].status;
+        t.eliminatedDate=null;
+        t.lastSeen=lastActive[lastActive.length-1].date;
+        t.streak=lastActive.length;
+      } else {
+        delete data.tracks[code];
+      }
+    }
+  }
+  saveWtData(data);
+  renderScanBar();
+  renderWatchlist();
+  showToast('已刪除掃描：'+dateStr);
+}
+
+function wtSwitchToDate(dateStr){
+  if(!dateMap||!dateMap.has(dateStr)){showToast('此日期資料不在DB中','err');return;}
+  currentDate=dateStr;
+  const sel=byId('dateSelect');
+  if(sel)sel.value=dateStr;
+  loadDay(dateStr);
+  showToast('已切換至 '+dateStr,'ok');
+}
+
+function renderScanBar(){
+  const data=loadWtData();
+  const scanDates=Object.keys(data.scans).sort().reverse();
+  const lbl=byId('wtScanHdrLabel');
+  if(lbl)lbl.textContent=`掃描管理（${scanDates.length} 個日期）`;
+  if(!wtScanBarOpen)return;
+  const list=byId('wtScanList');
+  if(!list)return;
+  list.innerHTML='';
+  if(!scanDates.length){
+    list.innerHTML=`<div class="wt-scan-no-date">尚未掃描任何日期</div>`;
+    return;
+  }
+  const frag=document.createDocumentFragment();
+  scanDates.forEach(d=>{
+    const cnt=(data.scans[d]||[]).length;
+    const isCurrent=d===currentDate;
+    const inDB=dateMap&&dateMap.has(d);
+    const item=document.createElement('div');
+    item.className='wt-scan-item'+(inDB?' clickable':'');
+    if(inDB)item.style.cursor='pointer';
+    item.innerHTML=`
+      <span class="wt-scan-date-lbl">${d}${isCurrent?'&nbsp;<span style="font-size:10px;color:var(--acc);font-family:var(--sans);">●當前</span>':''}</span>
+      <span class="wt-scan-cnt">${cnt} 支</span>
+      <button class="wt-scan-del" onclick="event.stopPropagation();wtDeleteScan('${d}')">×</button>`;
+    if(inDB)item.addEventListener('click',()=>wtSwitchToDate(d));
+    frag.appendChild(item);
+  });
+  list.appendChild(frag);
+}
+
+// Tab switching
+document.querySelectorAll('.wt-tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    wtActiveTab=btn.dataset.tab;
+    document.querySelectorAll('.wt-tab-btn').forEach(b=>b.classList.toggle('active',b===btn));
+    renderWatchlist();
+  });
+});
+document.getElementById('wtTopNSel')?.addEventListener('change',e=>{
+  wtTopN=Number(e.target.value);
+});
+
+// ════════════════════════════════════════════════
 // WATCHLIST RENDER
 // ════════════════════════════════════════════════
 async function renderWatchlist(){
-  await ensureWatchlist();
   const container=byId('watchList');
   container.innerHTML='';
-  const autoInfo=byId('watchAutoInfo');
-  if(autoInfo) autoInfo.style.display=watchlistTF==='AUTO'?'block':'none';
+  const data=loadWtData();
+  const rowMap=new Map((dayRows||[]).map(r=>[String(r.code).trim(),r]));
 
-  const isAuto=watchlistTF==='AUTO';
+  // Update scan bar header count
+  renderScanBar();
 
-  if(!watchlistRows.length&&!isAuto){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">⭐</div><div class="empty-title">自選股為空</div><div class="empty-sub">在排行榜點選股票後<br>點「⭐ 加入」加到自選股</div></div>`;
-    return;
-  }
-  if(!watchlistRows.length&&isAuto){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">⚡</div><div class="empty-title">無動能資料</div><div class="empty-sub">請先載入 .db 資料</div></div>`;
-    return;
-  }
+  // Update last scan label
+  const scanDates=Object.keys(data.scans).sort();
+  const lastScan=scanDates[scanDates.length-1];
+  const lbl=byId('wtLastScanLabel');
+  if(lbl)lbl.textContent=lastScan?`最後掃描：${lastScan}`:'尚未掃描';
 
-  // Compute dynScore for each row (if not already computed)
-  const scored=watchlistRows.map(r=>{
-    if(r.dynScore!=null&&r.dynType!=null)return r;
-    const {score,type}=computeDynScore(r);
-    return{...r,dynScore:score,dynType:type};
-  });
-  // Sort by dynScore descending
-  scored.sort((a,b)=>b.dynScore-a.dynScore);
-
-  const frag=document.createDocumentFragment();
-  scored.forEach((r,idx)=>{
-    const row=document.createElement('div');
-    row.className='rank-row'+(lastSymbol===r.code?' selected':'');
-    const upCls=(r.chg||0)>=0?'up':'dn';
-    const arrow=(r.chg||0)>=0?'▲':'▼';
-    const volKStr=fmtVol(r.volume);
-
-    // Rank number
-    let rankCls='rank-no';
-    if(idx===0)rankCls='rank-no gold';
-    else if(idx===1)rankCls='rank-no silver';
-    else if(idx===2)rankCls='rank-no bronze';
-
-    // Momentum type badge
-    let badge='';
-    if(r.dynType==='both')badge=`<span style="background:rgba(246,196,69,.18);color:var(--acc);font-size:10px;border-radius:4px;padding:1px 5px;font-weight:700;">💥量價齊揚</span>`;
-    else if(r.dynType==='price')badge=`<span style="background:rgba(255,59,48,.12);color:var(--up);font-size:10px;border-radius:4px;padding:1px 5px;font-weight:700;">📈價漲</span>`;
-    else if(r.dynType==='vol')badge=`<span style="background:rgba(0,191,255,.1);color:#00bfff;font-size:10px;border-radius:4px;padding:1px 5px;font-weight:700;">📊量增</span>`;
-
-    // volChg string
-    const volChgStr=r.volChg!=null?`量${r.volChg>=0?'+':''}${fmt(r.volChg,1)}%`:'';
-
-    row.innerHTML=`
-      <div class="${rankCls}">${idx+1}</div>
-      <div class="rr-main">
-        <div class="rr-name" style="display:flex;align-items:center;gap:5px;">
-          ${r.name}${badge}
-        </div>
-        <div class="rr-sub">
-          <span class="rr-code">${r.code}</span>
-          <span class="rr-industry">${r.industry||''}</span>
-        </div>
-        <div class="rr-vol-row">
-          <span class="rr-vol-lbl">總量</span>
-          <span class="rr-vol-val">${volKStr}</span>
-          ${volChgStr?`<span class="rr-vol-lbl" style="margin-left:8px;">${volChgStr}</span>`:''}
-        </div>
-      </div>
-      <div class="rr-nums">
-        <div class="rr-price ${upCls}">${fmt(r.close)}</div>
-        <div class="rr-chg-row ${upCls}">
-          <span class="rr-arrow">${arrow}</span>
-          <span class="rr-chg">${r.chg!=null?(r.chg>=0?'+':'')+fmt(r.chg):''}</span>
-          <span class="rr-pct">(${r.pct!=null?(r.pct>=0?'+':'')+fmt(r.pct)+'%':'—'})</span>
-        </div>
-      </div>
-      <div class="rr-star" style="color:var(--acc)">${isAuto?'⚡':'⭐'}</div>`;
-
-    row.addEventListener('click',()=>{
-      lastSymbol=r.code;lastName=r.name;
-      showSymbol(r.code,r.name);
-      updateWatchButtons();
-      container.querySelectorAll('.rank-row').forEach((rr,i)=>rr.classList.toggle('selected',i===idx));
+  if(wtActiveTab==='tracking'){
+    const active=Object.values(data.tracks).filter(t=>['new','active','manual'].includes(t.status));
+    // Sort: new first, then by streak desc
+    active.sort((a,b)=>{
+      const order={new:0,manual:1,active:2};
+      if(order[a.status]!==order[b.status])return order[a.status]-order[b.status];
+      return (b.streak||0)-(a.streak||0);
     });
-    row.addEventListener('dblclick',()=>switchPage('pgChart'));
-    frag.appendChild(row);
-  });
-  container.appendChild(frag);
+    byId('wt-cnt-tracking').textContent=active.length;
+    if(!active.length){
+      container.innerHTML=`<div class="wt-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><div>點擊上方「掃描當前日期」開始選股</div></div>`;
+      return;
+    }
+    const frag=document.createDocumentFragment();
+    active.forEach(t=>{
+      const r=rowMap.get(t.code);
+      const row=document.createElement('div');
+      row.className='wt-row'+(lastSymbol===t.code?' selected':'');
+      const pctCls=(r?.pct??0)>=0?'up':'dn';
+      const pctStr=r?.pct!=null?(r.pct>=0?'+':'')+fmt(r.pct)+'%':'—';
+      const chgStr=r?.chg!=null?(r.chg>=0?'+':'')+fmt(r.chg):'—';
+      const streakCls=t.streak>=5?'hot2':t.streak>=3?'hot':'';
+      let statusBadge='';
+      if(t.status==='new')statusBadge=`<span class="wt-sbadge new">新進</span>`;
+      else if(t.status==='manual')statusBadge=`<span class="wt-sbadge manual">鎖定</span>`;
+      row.innerHTML=`
+        <div class="wt-left">
+          <span class="wt-streak ${streakCls}">${t.streak||1}天</span>
+          ${statusBadge}
+        </div>
+        <div class="wt-main">
+          <div class="wt-name">${t.name}</div>
+          <div class="wt-sub">${t.code}・${r?.industry||''}</div>
+        </div>
+        <div class="wt-right">
+          <div class="wt-price">${r?fmt(r.close):'—'}</div>
+          <div class="wt-pct ${pctCls}">${pctStr}</div>
+          <div class="wt-chg">${chgStr}</div>
+        </div>`;
+      // Remove button
+      const rb=document.createElement('button');
+      rb.className='rr2-rm-btn';
+      rb.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+      rb.addEventListener('click',e=>{e.stopPropagation();wtRemoveTrack(t.code);});
+      row.appendChild(rb);
+      row.addEventListener('click',()=>{lastSymbol=t.code;lastName=t.name;showSymbol(t.code,t.name);updateWatchButtons();container.querySelectorAll('.wt-row').forEach(rr=>rr.classList.toggle('selected',rr===row));switchPage('pgChart');});
+      frag.appendChild(row);
+    });
+    container.appendChild(frag);
+
+  } else if(wtActiveTab==='review'){
+    // Eliminated within last 5 scans
+    const last5=scanDates.slice(-5);
+    const elim=Object.values(data.tracks).filter(t=>t.status==='eliminated'&&last5.includes(t.eliminatedDate));
+    elim.sort((a,b)=>(b.eliminatedDate||'').localeCompare(a.eliminatedDate||''));
+    byId('wt-cnt-review').textContent=elim.length;
+    if(!elim.length){
+      container.innerHTML=`<div class="wt-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg><div>目前沒有待審查的淘汰股</div></div>`;
+      return;
+    }
+    const frag=document.createDocumentFragment();
+    elim.forEach(t=>{
+      const r=rowMap.get(t.code);
+      const row=document.createElement('div');
+      row.className='wt-elim-row';
+      const pctCls=(r?.pct??0)>=0?'up':'dn';
+      const pctStr=r?.pct!=null?(r.pct>=0?'+':'')+fmt(r.pct)+'%':'—';
+      const elimIdx=scanDates.indexOf(t.eliminatedDate);
+      const agoCount=scanDates.length-1-elimIdx;
+      const agoLabel=agoCount===0?'今日':`${agoCount}日前`;
+      const prevStreak=t.history.filter(h=>h.status!=='eliminated'&&h.status!=='removed').length;
+      row.innerHTML=`
+        <div class="wt-elim-left">
+          <span class="wt-elim-ago">${agoLabel}</span>
+          <div class="wt-elim-dot"></div>
+        </div>
+        <div class="wt-elim-main">
+          <div class="wt-elim-name">${t.name}</div>
+          <div class="wt-elim-sub">${t.code}・淘汰前連續 ${prevStreak} 天</div>
+        </div>
+        <div class="wt-elim-right">
+          <div class="wt-pct ${pctCls}" style="font-size:13px;">${pctStr}</div>
+          <button class="wt-addback-btn" onclick="event.stopPropagation();wtAddBack('${t.code}')">＋加回</button>
+        </div>`;
+      row.style.cursor='pointer';
+      row.addEventListener('click',()=>{lastSymbol=t.code;lastName=t.name;showSymbol(t.code,t.name);updateWatchButtons();switchPage('pgChart');});
+      frag.appendChild(row);
+    });
+    container.appendChild(frag);
+
+  } else if(wtActiveTab==='history'){
+    const hist=Object.values(data.tracks).filter(t=>['eliminated','removed'].includes(t.status)||t.history?.length>0);
+    hist.sort((a,b)=>(b.lastSeen||'').localeCompare(a.lastSeen||''));
+    byId('wt-cnt-history').textContent=hist.length;
+    if(!hist.length){
+      container.innerHTML=`<div class="wt-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><div>尚無歷史紀錄</div></div>`;
+    } else {
+      // CSV export button
+      const csvBtn=document.createElement('button');
+      csvBtn.className='wt-csv-btn';
+      csvBtn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>匯出 CSV`;
+      csvBtn.addEventListener('click',wtExportCSV);
+      container.appendChild(csvBtn);
+      const frag=document.createDocumentFragment();
+      hist.forEach(t=>{
+        const maxStreak=Math.max(...(t.history||[]).filter(h=>['new','active','manual'].includes(h.status)).reduce((acc,_,i,arr)=>{let cur=0;arr.forEach(h=>['new','active','manual'].includes(h.status)?cur++:cur=0);acc.push(cur);return acc;},[]),t.streak||0);
+        const row=document.createElement('div');
+        row.className='wt-hist-row';
+        const reasonCls=t.status==='removed'?'removed':'elim';
+        const reasonLbl=t.status==='removed'?'手動移除':'系統淘汰';
+        const isActive=['new','active','manual'].includes(t.status);
+        row.innerHTML=`
+          <div class="wt-hist-main">
+            <div class="wt-hist-name">${t.name} <span style="font-size:11px;color:var(--txt3);font-weight:400;">${t.code}</span></div>
+            <div class="wt-hist-sub">${t.history?.length||0} 筆紀錄・最長 ${t.streak||1} 天</div>
+          </div>
+          <div class="wt-hist-right">
+            <div class="wt-hist-period">${(t.firstSeen||'').slice(4)} → ${(t.lastSeen||'').slice(4)}</div>
+            ${isActive?`<span class="wt-hist-reason" style="background:rgba(246,196,69,.1);color:var(--acc);">追蹤中</span>`:`<span class="wt-hist-reason ${reasonCls}">${reasonLbl}</span>`}
+          </div>`;
+        row.addEventListener('click',()=>{lastSymbol=t.code;lastName=t.name;showSymbol(t.code,t.name);updateWatchButtons();switchPage('pgChart');});
+        frag.appendChild(row);
+      });
+      container.appendChild(frag);
+    }
+  }
+  // Sync other tab counts silently
+  const allTracks=Object.values(data.tracks);
+  byId('wt-cnt-tracking').textContent=allTracks.filter(t=>['new','active','manual'].includes(t.status)).length;
+  const last5=scanDates.slice(-5);
+  byId('wt-cnt-review').textContent=allTracks.filter(t=>t.status==='eliminated'&&last5.includes(t.eliminatedDate)).length;
+  byId('wt-cnt-history').textContent=allTracks.length;
 }
+
 
 // ════════════════════════════════════════════════
 // LOAD DAY
@@ -3458,16 +3969,7 @@ document.querySelectorAll('.tf-btn').forEach(btn=>{
   });
 });
 
-// Watchlist TF
-document.querySelectorAll('.wl-tf-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.wl-tf-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    watchlistTF=btn.dataset.wtf;
-    watchlistRows=[];watchlistKey=null;
-    renderWatchlist();
-  });
-});
+// Watchlist TF — 已廢除（新系統待實作）
 
 // Floating nav buttons
 byId('floatPrev')?.addEventListener('click',()=>moveSelection(-1));
