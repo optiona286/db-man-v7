@@ -248,6 +248,28 @@ button{cursor:pointer;}
 /* empty state placeholder value */
 .hub-card-val[data-empty]{color:var(--txt3);font-size:16px;}
 
+/* Hub feature blocks (mobile-first full width) */
+.hub-feature{
+  background:linear-gradient(180deg,var(--bg2),#101012);
+  border:1px solid var(--brd);
+  border-radius:14px;
+  padding:12px 12px 10px;
+  margin-bottom:10px;
+}
+.hf-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.hf-title{font-size:13px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:7px;}
+.hf-title .bi{color:var(--acc);}
+.hf-more{
+  border:1px solid rgba(246,196,69,.3);background:rgba(246,196,69,.1);
+  color:var(--acc);font-size:11px;font-weight:700;border-radius:8px;
+  padding:6px 9px;
+}
+.hf-body{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.hf-kpi{background:var(--bg3);border:1px solid var(--brd2);border-radius:10px;padding:10px;}
+.hf-kpi-lbl{font-size:10px;color:var(--txt3);margin-bottom:4px;}
+.hf-kpi-val{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--txt);}
+.hf-kpi-sub{font-size:11px;color:var(--txt2);}
+
 /* ── RANK DETAIL ── */
 #rankDetail{display:none;flex-direction:column;flex:1;overflow:hidden;}
 #rankDetail.active{display:flex;}
@@ -1107,11 +1129,6 @@ button{cursor:pointer;}
               <div class="hub-card-val" id="hub-value">--</div>
               <div class="hub-card-sub">全市場總額</div>
             </div>
-            <div class="hub-card" onclick="enterDetail('price_stats')">
-              <div class="hub-card-top"><span class="hub-card-title">股價分布</span><span class="hub-card-icon"><i class="bi bi-pie-chart-fill"></i></span></div>
-              <div class="hub-card-val" id="hub-price_stats" style="font-size:14px;padding-top:4px;">股價區間</div>
-              <div class="hub-card-sub">收盤價分布圖</div>
-            </div>
           </div>
         </div>
 
@@ -1144,11 +1161,6 @@ button{cursor:pointer;}
               <div class="hub-card-val" id="hub-breakout">--</div>
               <div class="hub-card-sub">區間高點突破</div>
             </div>
-            <div class="hub-card" onclick="enterDetail('sector_rank')">
-              <div class="hub-card-top"><span class="hub-card-title">類股排行</span><span class="hub-card-icon"><i class="bi bi-buildings-fill"></i></span></div>
-              <div class="hub-card-val" style="font-size:14px;padding-top:4px;">產業強弱</div>
-              <div class="hub-card-sub">類股漲跌排名</div>
-            </div>
           </div>
         </div>
 
@@ -1180,6 +1192,45 @@ button{cursor:pointer;}
               <div class="hub-card-top"><span class="hub-card-title">千元</span><span class="hub-card-icon"><i class="bi bi-currency-dollar"></i></span></div>
               <div class="hub-card-val" id="hub-thousand">--</div>
               <div class="hub-card-sub">收盤 ≥ $1000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 深度分析（獨立詳情入口） -->
+        <div class="hub-feature">
+          <div class="hf-head">
+            <div class="hf-title"><i class="bi bi-buildings-fill"></i> 類股排行</div>
+            <button class="hf-more" onclick="enterDetail('sector_rank')">更多 ›</button>
+          </div>
+          <div class="hf-body">
+            <div class="hf-kpi">
+              <div class="hf-kpi-lbl">最強類股</div>
+              <div class="hf-kpi-val" id="hf-sector-top">--</div>
+              <div class="hf-kpi-sub" id="hf-sector-top-sub">等待資料</div>
+            </div>
+            <div class="hf-kpi">
+              <div class="hf-kpi-lbl">上漲家數</div>
+              <div class="hf-kpi-val" id="hf-sector-up">--</div>
+              <div class="hf-kpi-sub" id="hf-sector-dn-sub">下跌 --</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hub-feature">
+          <div class="hf-head">
+            <div class="hf-title"><i class="bi bi-pie-chart-fill"></i> 股價分布</div>
+            <button class="hf-more" onclick="enterDetail('price_stats')">更多 ›</button>
+          </div>
+          <div class="hf-body">
+            <div class="hf-kpi">
+              <div class="hf-kpi-lbl">最大區間</div>
+              <div class="hf-kpi-val" id="hf-dist-main">--</div>
+              <div class="hf-kpi-sub" id="hf-dist-main-sub">等待資料</div>
+            </div>
+            <div class="hf-kpi">
+              <div class="hf-kpi-lbl">百元以上</div>
+              <div class="hf-kpi-val" id="hf-dist-100">--</div>
+              <div class="hf-kpi-sub">收盤價 ≥ 100 元</div>
             </div>
           </div>
         </div>
@@ -3848,6 +3899,27 @@ function updateHubPreviews(){
   _setHV('hub-hundred',  rows.filter(r=>(r.close||0)>=100).length+'檔');
   _setHV('hub-fivehundred', rows.filter(r=>(r.close||0)>=500).length+'檔');
   _setHV('hub-thousand',  rows.filter(r=>(r.close||0)>=1000).length+'檔');
+
+  // Feature: sector rank preview
+  const sectors=computeSectorRank(rows);
+  if(sectors.length){
+    const topSec=sectors[0];
+    _setHV('hf-sector-top', topSec.industry||'--');
+    _setHV('hf-sector-top-sub', `平均 ${fmt(topSec.avgPct)}% ・ ${topSec.stocks.length} 檔`);
+    const upTotal=sectors.reduce((s,g)=>s+(g.up||0),0);
+    const dnTotal=sectors.reduce((s,g)=>s+(g.dn||0),0);
+    _setHV('hf-sector-up', `${upTotal}`);
+    _setHV('hf-sector-dn-sub', `下跌 ${dnTotal}`);
+  }
+
+  // Feature: price distribution preview
+  const dist=computePriceStats(rows);
+  const topBucket=dist.slice().sort((a,b)=>b.count-a.count)[0];
+  if(topBucket){
+    _setHV('hf-dist-main', `${topBucket.count}`);
+    _setHV('hf-dist-main-sub', topBucket.range);
+  }
+  _setHV('hf-dist-100', rows.filter(r=>(r.close||0)>=100).length+'檔');
 }
 
 function _setHV(id,txt){const el=byId(id);if(el)el.textContent=txt;}
