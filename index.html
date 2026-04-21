@@ -228,7 +228,17 @@ button{cursor:pointer;}
 .hub-card.mo::before{background:var(--acc2);}
 .hub-card-top{display:flex;align-items:center;justify-content:space-between;}
 .hub-card-title{font-size:13px;font-weight:700;color:var(--txt2);}
-.hub-card-icon{font-size:12px;opacity:.6;}
+.hub-card-icon{
+  width:22px;height:22px;border-radius:7px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.09);
+  color:var(--txt2);font-size:12px;opacity:1;
+}
+.hub-card.up .hub-card-icon{background:rgba(255,59,48,.14);border-color:rgba(255,59,48,.32);color:#ff8f89;}
+.hub-card.dn .hub-card-icon{background:rgba(50,215,75,.14);border-color:rgba(50,215,75,.32);color:#73e78b;}
+.hub-card.acc .hub-card-icon{background:rgba(246,196,69,.14);border-color:rgba(246,196,69,.36);color:var(--acc);}
+.hub-card.mo .hub-card-icon{background:rgba(255,159,10,.16);border-color:rgba(255,159,10,.35);color:#ffbe66;}
 .hub-card-val{font-size:22px;font-weight:800;font-family:var(--mono);line-height:1.1;color:var(--txt);}
 .hub-card.up .hub-card-val{color:var(--up);}
 .hub-card.dn .hub-card-val{color:var(--dn);}
@@ -1083,22 +1093,22 @@ button{cursor:pointer;}
               <div class="hub-card-sub">最大跌幅</div>
             </div>
             <div class="hub-card acc" onclick="enterDetail('limitup')">
-              <div class="hub-card-top"><span class="hub-card-title">漲停</span><span class="hub-card-icon"><i class="bi bi-arrow-up-circle"></i></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">漲停</span><span class="hub-card-icon"><i class="bi bi-arrow-up-circle-fill"></i></span></div>
               <div class="hub-card-val" id="hub-limitup">--</div>
               <div class="hub-card-sub" id="hub-limitup-sub">今日漲停</div>
             </div>
             <div class="hub-card" onclick="enterDetail('volume')">
-              <div class="hub-card-top"><span class="hub-card-title">成交量</span><span class="hub-card-icon"><i class="bi bi-bar-chart-line"></i></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">成交量</span><span class="hub-card-icon"><i class="bi bi-bar-chart-fill"></i></span></div>
               <div class="hub-card-val" id="hub-volume">--</div>
               <div class="hub-card-sub" id="hub-volume-sub">量王</div>
             </div>
             <div class="hub-card" onclick="enterDetail('value')">
-              <div class="hub-card-top"><span class="hub-card-title">成交額</span><span class="hub-card-icon"><i class="bi bi-cash-coin"></i></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">成交額</span><span class="hub-card-icon"><i class="bi bi-cash-stack"></i></span></div>
               <div class="hub-card-val" id="hub-value">--</div>
               <div class="hub-card-sub">全市場總額</div>
             </div>
             <div class="hub-card" onclick="enterDetail('price_stats')">
-              <div class="hub-card-top"><span class="hub-card-title">股價分布</span><span class="hub-card-icon"><i class="bi bi-pie-chart"></i></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">股價分布</span><span class="hub-card-icon"><i class="bi bi-pie-chart-fill"></i></span></div>
               <div class="hub-card-val" id="hub-price_stats" style="font-size:14px;padding-top:4px;">股價區間</div>
               <div class="hub-card-sub">收盤價分布圖</div>
             </div>
@@ -1110,12 +1120,12 @@ button{cursor:pointer;}
           <div class="hub-sec-title">量能／強勢 <em>MOMENTUM</em></div>
           <div class="hub-grid">
             <div class="hub-card mo" onclick="enterDetail('vol_surge')">
-              <div class="hub-card-top"><span class="hub-card-title">量增長</span><span class="hub-card-icon"><i class="bi bi-activity"></i></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">量增長</span><span class="hub-card-icon"><i class="bi bi-lightning-charge-fill"></i></span></div>
               <div class="hub-card-val" id="hub-vol_surge">--</div>
               <div class="hub-card-sub">最大量增</div>
             </div>
             <div class="hub-card mo" onclick="enterDetail('vol_ratio')">
-              <div class="hub-card-top"><span class="hub-card-title">量比</span><span class="hub-card-icon"><i class="bi bi-layers"></i></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">量比</span><span class="hub-card-icon"><i class="bi bi-stack"></i></span></div>
               <div class="hub-card-val" id="hub-vol_ratio">--</div>
               <div class="hub-card-sub">前5日均量比</div>
             </div>
@@ -1130,12 +1140,12 @@ button{cursor:pointer;}
               <div class="hub-card-sub">連續5日上漲</div>
             </div>
             <div class="hub-card acc" onclick="enterDetail('breakout')">
-              <div class="hub-card-top"><span class="hub-card-title">突破</span><span class="hub-card-icon"><i class="bi bi-arrow-up-right"></i></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">突破</span><span class="hub-card-icon"><i class="bi bi-arrow-up-right-circle-fill"></i></span></div>
               <div class="hub-card-val" id="hub-breakout">--</div>
               <div class="hub-card-sub">區間高點突破</div>
             </div>
             <div class="hub-card" onclick="enterDetail('sector_rank')">
-              <div class="hub-card-top"><span class="hub-card-title">類股排行</span><span class="hub-card-icon"><i class="bi bi-grid-1x2"></i></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">類股排行</span><span class="hub-card-icon"><i class="bi bi-buildings-fill"></i></span></div>
               <div class="hub-card-val" style="font-size:14px;padding-top:4px;">產業強弱</div>
               <div class="hub-card-sub">類股漲跌排名</div>
             </div>
