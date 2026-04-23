@@ -13,6 +13,8 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
 <script>
@@ -57,7 +59,7 @@
   --r8:      8px;
   --r12:     12px;
   --r16:     16px;
-  --nav-h:   62px;
+  --nav-h:   72px;
   --hdr-h:   52px;
   --safe-t:  env(safe-area-inset-top,0px);
   --safe-b:  env(safe-area-inset-bottom,0px);
@@ -79,6 +81,7 @@ body{
 ::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px;}
 input,select,button{font-family:var(--sans);outline:none;-webkit-appearance:none;appearance:none;}
 button{cursor:pointer;}
+.bi{vertical-align:-0.12em;line-height:1;}
 
 /* ── HEADER ── */
 #hdr{
@@ -106,7 +109,8 @@ button{cursor:pointer;}
 .hdr-btn{
   background:var(--bg3);border:1px solid var(--brd);
   color:var(--txt);border-radius:var(--r8);
-  padding:7px 10px;font-size:11px;font-weight:600;
+  min-height:44px;
+  padding:10px 12px;font-size:12px;font-weight:700;
   white-space:nowrap;
   transition:background .12s;
 }
@@ -128,7 +132,8 @@ button{cursor:pointer;}
   flex:1;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:3px;
   color:var(--txt3);border:none;background:none;
-  font-family:var(--sans);padding-top:6px;
+  font-family:var(--sans);padding-top:8px;
+  min-height:52px;
   position:relative;transition:color .15s;
 }
 .nb.active{color:var(--acc);}
@@ -136,8 +141,9 @@ button{cursor:pointer;}
   content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
   width:28px;height:2px;background:var(--acc);border-radius:0 0 2px 2px;
 }
-.nb svg{width:20px;height:20px;}
-.nb span{font-size:9px;font-weight:700;letter-spacing:.3px;}
+.nb svg{width:22px;height:22px;}
+.nb .fa-solid{font-size:20px;line-height:1;}
+.nb span{font-size:11px;font-weight:700;letter-spacing:.3px;}
 
 /* ── APP AREA ── */
 #app{
@@ -151,7 +157,23 @@ button{cursor:pointer;}
   -webkit-overflow-scrolling:touch;
   display:none;
 }
-.page.active{display:flex;flex-direction:column;}
+.page.active{
+  display:flex;flex-direction:column;
+  animation:pageIn .22s cubic-bezier(.22,.61,.36,1);
+}
+.page.leaving{
+  display:flex;flex-direction:column;
+  pointer-events:none;
+  animation:pageOut .18s ease forwards;
+}
+@keyframes pageIn{
+  from{opacity:0;transform:translateX(10px);}
+  to{opacity:1;transform:translateX(0);}
+}
+@keyframes pageOut{
+  from{opacity:1;transform:translateX(0);}
+  to{opacity:0;transform:translateX(-10px);}
+}
 
 /* ── PAGE: RANKINGS ── */
 #pgRank{background:var(--bg);}
@@ -208,7 +230,17 @@ button{cursor:pointer;}
 .hub-card.mo::before{background:var(--acc2);}
 .hub-card-top{display:flex;align-items:center;justify-content:space-between;}
 .hub-card-title{font-size:13px;font-weight:700;color:var(--txt2);}
-.hub-card-icon{font-size:12px;opacity:.6;}
+.hub-card-icon{
+  width:22px;height:22px;border-radius:7px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.09);
+  color:var(--txt2);font-size:12px;opacity:1;
+}
+.hub-card.up .hub-card-icon{background:rgba(255,59,48,.14);border-color:rgba(255,59,48,.32);color:#ff8f89;}
+.hub-card.dn .hub-card-icon{background:rgba(50,215,75,.14);border-color:rgba(50,215,75,.32);color:#73e78b;}
+.hub-card.acc .hub-card-icon{background:rgba(246,196,69,.14);border-color:rgba(246,196,69,.36);color:var(--acc);}
+.hub-card.mo .hub-card-icon{background:rgba(255,159,10,.16);border-color:rgba(255,159,10,.35);color:#ffbe66;}
 .hub-card-val{font-size:22px;font-weight:800;font-family:var(--mono);line-height:1.1;color:var(--txt);}
 .hub-card.up .hub-card-val{color:var(--up);}
 .hub-card.dn .hub-card-val{color:var(--dn);}
@@ -217,6 +249,28 @@ button{cursor:pointer;}
 .hub-card-sub{font-size:11px;color:var(--txt3);}
 /* empty state placeholder value */
 .hub-card-val[data-empty]{color:var(--txt3);font-size:16px;}
+
+/* Hub feature blocks (mobile-first full width) */
+.hub-feature{
+  background:linear-gradient(180deg,var(--bg2),#101012);
+  border:1px solid var(--brd);
+  border-radius:14px;
+  padding:12px 12px 10px;
+  margin-bottom:10px;
+}
+.hf-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.hf-title{font-size:13px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:7px;}
+.hf-title .bi{color:var(--acc);}
+.hf-more{
+  border:1px solid rgba(246,196,69,.3);background:rgba(246,196,69,.1);
+  color:var(--acc);font-size:11px;font-weight:700;border-radius:8px;
+  padding:6px 9px;
+}
+.hf-body{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.hf-kpi{background:var(--bg3);border:1px solid var(--brd2);border-radius:10px;padding:10px;}
+.hf-kpi-lbl{font-size:10px;color:var(--txt3);margin-bottom:4px;}
+.hf-kpi-val{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--txt);}
+.hf-kpi-sub{font-size:11px;color:var(--txt2);}
 
 /* ── RANK DETAIL ── */
 #rankDetail{display:none;flex-direction:column;flex:1;overflow:hidden;}
@@ -242,24 +296,6 @@ button{cursor:pointer;}
   display:flex;align-items:baseline;gap:8px;
 }
 .detail-en-title{font-size:11px;font-weight:400;color:var(--txt3);letter-spacing:.5px;}
-
-/* Stats bar (紅綠類) */
-.detail-stats-bar{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  flex-shrink:0;background:var(--bg1);
-  border-bottom:1px solid var(--brd);
-}
-.dsb-cell{
-  padding:10px 6px;text-align:center;
-  border-right:1px solid var(--brd2);
-}
-.dsb-cell:last-child{border-right:none;}
-.dsb-val{font-size:20px;font-weight:800;font-family:var(--mono);line-height:1;}
-.dsb-lbl{font-size:10px;color:var(--txt3);margin-top:3px;letter-spacing:.5px;}
-.dsb-up .dsb-val{color:var(--up);}
-.dsb-dn .dsb-val{color:var(--dn);}
-.dsb-flat .dsb-val{color:var(--txt3);}
-.dsb-limit .dsb-val{color:var(--acc);}
 
 /* Column header */
 .detail-col-hdr{
@@ -298,6 +334,12 @@ button{cursor:pointer;}
 .rr2-pct-row{display:flex;align-items:center;gap:6px;}
 .rr2-pct{font-family:var(--mono);font-size:16px;font-weight:800;line-height:1;}
 .rr2-chg{font-family:var(--mono);font-size:11px;color:var(--txt3);}
+.rr2-mid-volume{
+  min-width:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 8px;gap:3px;
+}
+.rr2-mid-volume .v-lbl{font-size:10px;color:var(--txt3);letter-spacing:.4px;}
+.rr2-mid-volume .v-val{font-family:var(--mono);font-size:18px;font-weight:800;color:var(--acc);line-height:1.1;}
 
 /* % badge (量能類) */
 .rr2-pct-badge{
@@ -331,7 +373,7 @@ button{cursor:pointer;}
 .filter-bar input,.filter-bar select{
   background:var(--bg3);border:1px solid var(--brd);
   color:var(--txt);border-radius:var(--r8);
-  padding:7px 10px;font-size:12px;height:34px;
+  padding:9px 12px;font-size:13px;height:42px;
   flex-shrink:0;
 }
 .filter-bar input{min-width:0;}
@@ -340,8 +382,8 @@ button{cursor:pointer;}
 #searchBox{flex:1;min-width:100px;}
 .filter-toggle{
   background:var(--bg3);border:1px solid var(--brd);color:var(--txt2);
-  border-radius:var(--r8);padding:7px 10px;font-size:12px;
-  white-space:nowrap;flex-shrink:0;height:34px;
+  border-radius:var(--r8);padding:9px 12px;font-size:13px;
+  white-space:nowrap;flex-shrink:0;height:42px;
   display:flex;align-items:center;
 }
 .filter-toggle.active{border-color:rgba(246,196,69,.4);color:var(--acc);}
@@ -596,46 +638,21 @@ button{cursor:pointer;}
 }
 .chart-title{font-size:14px;font-weight:700;color:var(--txt);flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .chart-title .code{color:var(--txt2);font-size:12px;font-family:var(--mono);}
-.mkt-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
-.mkt-badge.twse{background:rgba(255,59,48,.18);color:#ff6b6b;border:1px solid rgba(255,59,48,.3);}
-.mkt-badge.tpex{background:rgba(50,215,75,.15);color:#32d74b;border:1px solid rgba(50,215,75,.3);}
-.mkt-badge.emer{background:rgba(246,196,69,.15);color:var(--acc);border:1px solid rgba(246,196,69,.3);}
 
-/* Company info panel */
-.company-panel{
-  background:var(--bg1);border-bottom:1px solid var(--brd);
-  padding:0;max-height:0;overflow:hidden;transition:max-height .3s ease;flex-shrink:0;
-}
-.company-panel.open{max-height:400px;overflow-y:auto;}
-.company-panel-inner{padding:10px 14px 12px;}
-.cp-toggle{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:6px 14px;background:var(--bg1);border-bottom:1px solid var(--brd2);
-  cursor:pointer;flex-shrink:0;font-size:12px;color:var(--txt3);
-  transition:background .1s;
-}
-.cp-toggle:active{background:var(--bg3);}
-.cp-toggle .arrow{transition:transform .2s;font-size:10px;}
-.cp-toggle .arrow.open{transform:rotate(180deg);}
-.cp-row{display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:1px solid var(--brd2);}
-.cp-row:last-child{border-bottom:none;}
-.cp-lbl{font-size:11px;color:var(--txt3);width:72px;flex-shrink:0;padding-top:1px;}
-.cp-val{font-size:12px;color:var(--txt2);flex:1;line-height:1.5;word-break:break-all;}
-.cp-loading{font-size:12px;color:var(--txt3);text-align:center;padding:14px 0;}
-.cp-tags{display:flex;flex-wrap:wrap;gap:4px;}
-.cp-tag{font-size:10px;padding:2px 7px;border-radius:4px;background:rgba(246,196,69,.1);color:var(--acc);border:1px solid rgba(246,196,69,.2);}
 .tf-seg{display:flex;gap:4px;}
 .tf-btn{
   background:var(--bg3);border:1px solid var(--brd);
   color:var(--txt2);border-radius:var(--r8);
-  padding:6px 12px;font-size:12px;font-weight:600;
+  min-height:40px;
+  padding:8px 14px;font-size:13px;font-weight:700;
 }
 .tf-btn.active{background:rgba(246,196,69,.14);border-color:rgba(246,196,69,.4);color:var(--acc);}
 .chart-nav{display:flex;gap:6px;}
 .chart-nav button{
   background:var(--bg3);border:1px solid var(--brd);
   color:var(--txt2);border-radius:var(--r8);
-  padding:6px 12px;font-size:12px;font-weight:600;
+  min-height:40px;
+  padding:8px 14px;font-size:13px;font-weight:700;
 }
 .chart-nav button:active{background:var(--bg5);}
 
@@ -929,6 +946,7 @@ button{cursor:pointer;}
   max-height:70vh;overflow-y:auto;
 }
 #filterDrawer.open{transform:translateY(0);}
+#filterDrawer.dragging{transition:none;}
 .drawer-handle{width:36px;height:4px;background:var(--bg5);border-radius:2px;margin:12px auto 14px;}
 .drawer-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:14px;}
 .drawer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;}
@@ -1030,7 +1048,7 @@ button{cursor:pointer;}
   <div class="hdr-logo">看盤<em>PRO</em></div>
   <div class="hdr-status" id="dbStatus">尚未載入資料庫</div>
   <div class="hdr-actions">
-    <select id="dateSelect" class="hdr-btn" disabled style="padding:6px 8px;font-size:11px;"></select>
+    <select id="dateSelect" class="hdr-btn" disabled></select>
     <label class="hdr-btn acc" for="dbFiles"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>載入</label>
     <input type="file" id="dbFiles" accept=".db" multiple>
   </div>
@@ -1039,37 +1057,23 @@ button{cursor:pointer;}
 <!-- ── BOTTOM NAV ── -->
 <nav id="nav">
   <button class="nb active" onclick="switchPage('pgRank')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <path d="M3 17l4-8 4 4 4-6 4 3"/><path d="M3 20h18" stroke-width="1.5"/>
-    </svg>
+    <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
     <span>排行</span>
   </button>
   <button class="nb" onclick="switchPage('pgChart')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <rect x="3" y="3" width="18" height="18" rx="2"/>
-      <path d="M8 12l2-3 3 4 2-2 3 4" stroke-width="1.5"/>
-    </svg>
+    <i class="fa-solid fa-chart-column" aria-hidden="true"></i>
     <span>K線</span>
   </button>
   <button class="nb" onclick="switchPage('pgWatch')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>
-    </svg>
+    <i class="fa-solid fa-star" aria-hidden="true"></i>
     <span>自選</span>
   </button>
   <button class="nb" onclick="switchPage('pgStats')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <rect x="3" y="12" width="4" height="9" rx="1"/>
-      <rect x="10" y="7" width="4" height="14" rx="1"/>
-      <rect x="17" y="3" width="4" height="18" rx="1"/>
-    </svg>
+    <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
     <span>統計</span>
   </button>
   <button class="nb" onclick="switchPage('pgSet')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M12 2v3m0 14v3m10-10h-3M5 12H2m14.95-4.95-2.12 2.12M9.17 14.83l-2.12 2.12m12.02 0-2.12-2.12M9.17 9.17 7.05 7.05"/>
-    </svg>
+    <i class="fa-solid fa-gear" aria-hidden="true"></i>
     <span>設定</span>
   </button>
 </nav>
@@ -1089,34 +1093,29 @@ button{cursor:pointer;}
           <div class="hub-sec-title">熱門 <em>HOT</em></div>
           <div class="hub-grid">
             <div class="hub-card up" onclick="enterDetail('gainers')">
-              <div class="hub-card-top"><span class="hub-card-title">漲幅</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">漲幅</span><span class="hub-card-icon"><i class="bi bi-graph-up-arrow"></i></span></div>
               <div class="hub-card-val" id="hub-gainers">--</div>
               <div class="hub-card-sub">最大漲幅</div>
             </div>
             <div class="hub-card dn" onclick="enterDetail('losers')">
-              <div class="hub-card-top"><span class="hub-card-title">跌幅</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">跌幅</span><span class="hub-card-icon"><i class="bi bi-graph-down-arrow"></i></span></div>
               <div class="hub-card-val" id="hub-losers">--</div>
               <div class="hub-card-sub">最大跌幅</div>
             </div>
             <div class="hub-card acc" onclick="enterDetail('limitup')">
-              <div class="hub-card-top"><span class="hub-card-title">漲停</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">漲停</span><span class="hub-card-icon"><i class="bi bi-arrow-up-circle-fill"></i></span></div>
               <div class="hub-card-val" id="hub-limitup">--</div>
               <div class="hub-card-sub" id="hub-limitup-sub">今日漲停</div>
             </div>
             <div class="hub-card" onclick="enterDetail('volume')">
-              <div class="hub-card-top"><span class="hub-card-title">成交量</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">成交量</span><span class="hub-card-icon"><i class="bi bi-bar-chart-fill"></i></span></div>
               <div class="hub-card-val" id="hub-volume">--</div>
               <div class="hub-card-sub" id="hub-volume-sub">量王</div>
             </div>
             <div class="hub-card" onclick="enterDetail('value')">
-              <div class="hub-card-top"><span class="hub-card-title">成交額</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">成交額</span><span class="hub-card-icon"><i class="bi bi-cash-stack"></i></span></div>
               <div class="hub-card-val" id="hub-value">--</div>
               <div class="hub-card-sub">全市場總額</div>
-            </div>
-            <div class="hub-card" onclick="enterDetail('price_stats')">
-              <div class="hub-card-top"><span class="hub-card-title">股價分布</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span></div>
-              <div class="hub-card-val" id="hub-price_stats" style="font-size:14px;padding-top:4px;">股價區間</div>
-              <div class="hub-card-sub">收盤價分布圖</div>
             </div>
           </div>
         </div>
@@ -1126,34 +1125,29 @@ button{cursor:pointer;}
           <div class="hub-sec-title">量能／強勢 <em>MOMENTUM</em></div>
           <div class="hub-grid">
             <div class="hub-card mo" onclick="enterDetail('vol_surge')">
-              <div class="hub-card-top"><span class="hub-card-title">量增長</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">量增長</span><span class="hub-card-icon"><i class="bi bi-lightning-charge-fill"></i></span></div>
               <div class="hub-card-val" id="hub-vol_surge">--</div>
               <div class="hub-card-sub">最大量增</div>
             </div>
             <div class="hub-card mo" onclick="enterDetail('vol_ratio')">
-              <div class="hub-card-top"><span class="hub-card-title">量比</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">量比</span><span class="hub-card-icon"><i class="bi bi-stack"></i></span></div>
               <div class="hub-card-val" id="hub-vol_ratio">--</div>
               <div class="hub-card-sub">前5日均量比</div>
             </div>
             <div class="hub-card up" onclick="enterDetail('up3days')">
-              <div class="hub-card-top"><span class="hub-card-title">連3紅</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c0-5-3-8-6-11 2 1 4 2 5 4 0-4-2-7-4-9 5 3 9 8 9 16z"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">連3紅</span><span class="hub-card-icon"><i class="bi bi-fire"></i></span></div>
               <div class="hub-card-val" id="hub-up3days">--</div>
               <div class="hub-card-sub">連續3日上漲</div>
             </div>
             <div class="hub-card up" onclick="enterDetail('up5days')">
-              <div class="hub-card-top"><span class="hub-card-title">連5紅</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c0-5-3-8-6-11 2 1 4 2 5 4 0-4-2-7-4-9 5 3 9 8 9 16z"/><path d="M12 22c0-3 1.5-5 3-6-1 2 0 4 2 6"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">連5紅</span><span class="hub-card-icon"><i class="bi bi-fire"></i></span></div>
               <div class="hub-card-val" id="hub-up5days">--</div>
               <div class="hub-card-sub">連續5日上漲</div>
             </div>
             <div class="hub-card acc" onclick="enterDetail('breakout')">
-              <div class="hub-card-top"><span class="hub-card-title">突破</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">突破</span><span class="hub-card-icon"><i class="bi bi-arrow-up-right-circle-fill"></i></span></div>
               <div class="hub-card-val" id="hub-breakout">--</div>
               <div class="hub-card-sub">區間高點突破</div>
-            </div>
-            <div class="hub-card" onclick="enterDetail('sector_rank')">
-              <div class="hub-card-top"><span class="hub-card-title">類股排行</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span></div>
-              <div class="hub-card-val" style="font-size:14px;padding-top:4px;">產業強弱</div>
-              <div class="hub-card-sub">類股漲跌排名</div>
             </div>
           </div>
         </div>
@@ -1163,29 +1157,68 @@ button{cursor:pointer;}
           <div class="hub-sec-title">週期／價位 <em>PERIOD &amp; PRICE</em></div>
           <div class="hub-grid">
             <div class="hub-card acc" onclick="enterDetail('weekly')">
-              <div class="hub-card-top"><span class="hub-card-title">週線</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">週線</span><span class="hub-card-icon"><i class="bi bi-calendar-week"></i></span></div>
               <div class="hub-card-val" style="font-size:14px;padding-top:4px;">本週漲幅</div>
               <div class="hub-card-sub" id="hub-weekly-sub">週線排行</div>
             </div>
             <div class="hub-card acc" onclick="enterDetail('monthly')">
-              <div class="hub-card-top"><span class="hub-card-title">月線</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="15" x2="16" y2="15"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">月線</span><span class="hub-card-icon"><i class="bi bi-calendar3"></i></span></div>
               <div class="hub-card-val" style="font-size:14px;padding-top:4px;">本月漲幅</div>
               <div class="hub-card-sub" id="hub-monthly-sub">月線排行</div>
             </div>
             <div class="hub-card" onclick="enterDetail('hundred')">
-              <div class="hub-card-top"><span class="hub-card-title">百元</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">百元</span><span class="hub-card-icon"><i class="bi bi-currency-dollar"></i></span></div>
               <div class="hub-card-val" id="hub-hundred">--</div>
               <div class="hub-card-sub">收盤 ≥ $100</div>
             </div>
             <div class="hub-card" onclick="enterDetail('fivehundred')">
-              <div class="hub-card-top"><span class="hub-card-title">五百元</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">五百元</span><span class="hub-card-icon"><i class="bi bi-currency-dollar"></i></span></div>
               <div class="hub-card-val" id="hub-fivehundred">--</div>
               <div class="hub-card-sub">收盤 ≥ $500</div>
             </div>
             <div class="hub-card" onclick="enterDetail('thousand')">
-              <div class="hub-card-top"><span class="hub-card-title">千元</span><span class="hub-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span></div>
+              <div class="hub-card-top"><span class="hub-card-title">千元</span><span class="hub-card-icon"><i class="bi bi-currency-dollar"></i></span></div>
               <div class="hub-card-val" id="hub-thousand">--</div>
               <div class="hub-card-sub">收盤 ≥ $1000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 深度分析（獨立詳情入口） -->
+        <div class="hub-feature">
+          <div class="hf-head">
+            <div class="hf-title"><i class="bi bi-buildings-fill"></i> 類股排行</div>
+            <button class="hf-more" onclick="enterDetail('sector_rank')">更多 ›</button>
+          </div>
+          <div class="hf-body">
+            <div class="hf-kpi">
+              <div class="hf-kpi-lbl">最強類股</div>
+              <div class="hf-kpi-val" id="hf-sector-top">--</div>
+              <div class="hf-kpi-sub" id="hf-sector-top-sub">等待資料</div>
+            </div>
+            <div class="hf-kpi">
+              <div class="hf-kpi-lbl">上漲家數</div>
+              <div class="hf-kpi-val" id="hf-sector-up">--</div>
+              <div class="hf-kpi-sub" id="hf-sector-dn-sub">下跌 --</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hub-feature">
+          <div class="hf-head">
+            <div class="hf-title"><i class="bi bi-pie-chart-fill"></i> 股價分布</div>
+            <button class="hf-more" onclick="enterDetail('price_stats')">更多 ›</button>
+          </div>
+          <div class="hf-body">
+            <div class="hf-kpi">
+              <div class="hf-kpi-lbl">最大區間</div>
+              <div class="hf-kpi-val" id="hf-dist-main">--</div>
+              <div class="hf-kpi-sub" id="hf-dist-main-sub">等待資料</div>
+            </div>
+            <div class="hf-kpi">
+              <div class="hf-kpi-lbl">百元以上</div>
+              <div class="hf-kpi-val" id="hf-dist-100">--</div>
+              <div class="hf-kpi-sub">收盤價 ≥ 100 元</div>
             </div>
           </div>
         </div>
@@ -1205,13 +1238,6 @@ button{cursor:pointer;}
             <span class="detail-en-title" id="detailTitleEn"></span>
           </div>
         </div>
-      </div>
-      <!-- Stats bar (紅綠類) -->
-      <div class="detail-stats-bar" id="detailStatsBar" style="display:none">
-        <div class="dsb-cell dsb-up"><div class="dsb-val" id="dsb-up">--</div><div class="dsb-lbl">上漲</div></div>
-        <div class="dsb-cell dsb-dn"><div class="dsb-val" id="dsb-dn">--</div><div class="dsb-lbl">下跌</div></div>
-        <div class="dsb-cell dsb-flat"><div class="dsb-val" id="dsb-flat">--</div><div class="dsb-lbl">平盤</div></div>
-        <div class="dsb-cell dsb-limit"><div class="dsb-val" id="dsb-limit">--</div><div class="dsb-lbl">漲停</div></div>
       </div>
       <!-- Column header -->
       <div class="detail-col-hdr" id="detailColHdr" style="display:none">
@@ -1238,9 +1264,9 @@ button{cursor:pointer;}
       <!-- Ranking list -->
       <div class="rank-list" id="rankList">
         <div class="empty-state" id="rankEmpty">
-          <div class="empty-icon">📊</div>
+          <div class="empty-icon"><i class="bi bi-bar-chart-line"></i></div>
           <div class="empty-title">尚未載入資料</div>
-          <div class="empty-sub">點擊右上角「📂 載入」上傳 .db 檔<br>支援多檔同時選取</div>
+          <div class="empty-sub">點擊右上角「載入」上傳 .db 檔<br>支援多檔同時選取</div>
         </div>
       </div>
     </div><!-- /rankDetail -->
@@ -1253,7 +1279,6 @@ button{cursor:pointer;}
       <div class="chart-title" id="chartTitle">
         <span id="chartName">選擇股票</span>
         <span class="code" id="chartCode"></span>
-        <span id="chartMktBadge"></span>
       </div>
       <div class="tf-seg">
         <button class="tf-btn active" data-tf="D">日</button>
@@ -1267,14 +1292,6 @@ button{cursor:pointer;}
     </div>
     <div class="chart-info" id="chartInfo">
       <div class="ci-row" id="ciRow" style="color:var(--txt3)">選擇股票後顯示 K 線資訊</div>
-    </div>
-    <!-- Company info toggle + panel -->
-    <div class="cp-toggle" id="cpToggle" style="display:none;" onclick="toggleCompanyPanel()">
-      <span>📋 公司基本資料</span>
-      <span class="arrow" id="cpArrow">▼</span>
-    </div>
-    <div class="company-panel" id="companyPanel">
-      <div class="company-panel-inner" id="companyPanelInner"></div>
     </div>
     <div id="kchart" style="position:relative;flex:1;min-height:280px;background:var(--bg);">
     </div>
@@ -1415,7 +1432,7 @@ button{cursor:pointer;}
   <div class="page" id="pgStats">
     <!-- Market Overview -->
     <div class="stats-section" id="statsMarketSection" style="display:none">
-      <div class="stats-title">📊 今日市場概覽</div>
+      <div class="stats-title"><i class="bi bi-speedometer2"></i> 今日市場概覽</div>
       <div class="stats-card">
         <div class="mkt-grid" id="statsMarketCard"></div>
         <div class="mkt-progress">
@@ -1432,7 +1449,7 @@ button{cursor:pointer;}
     </div>
     <!-- Price Change Distribution -->
     <div class="stats-section" id="statsDistSection" style="display:none">
-      <div class="stats-title">📈 漲跌幅分布</div>
+      <div class="stats-title"><i class="bi bi-graph-up-arrow"></i> 漲跌幅分布</div>
       <div class="stats-card">
         <div class="dist-bar-container" id="distBarContainer"></div>
       </div>
@@ -1444,7 +1461,7 @@ button{cursor:pointer;}
     </div>
     <!-- Heatmap -->
     <div class="stats-section" id="statsHeatmapSection" style="display:none;padding-left:0;padding-right:0;">
-      <div class="stats-title" style="padding-left:16px;">🌡 個股成交量排行熱力圖</div>
+      <div class="stats-title" style="padding-left:16px;"><i class="bi bi-activity"></i> 個股成交量排行熱力圖</div>
       <div class="stats-card" style="border-radius:0;border-left:none;border-right:none;overflow:hidden;">
         <div class="heatmap-wrap">
           <div id="heatmapChart"></div>
@@ -1453,14 +1470,14 @@ button{cursor:pointer;}
     </div>
     <!-- Sector Performance Bar Chart -->
     <div class="stats-section" id="statsRadarSection" style="display:none">
-      <div class="stats-title">📊 類股表現排行 <span style="font-size:10px;color:var(--txt3);text-transform:none;letter-spacing:0">(前15類股)</span></div>
+      <div class="stats-title"><i class="bi bi-grid-1x2"></i> 類股表現排行 <span style="font-size:10px;color:var(--txt3);text-transform:none;letter-spacing:0">(前15類股)</span></div>
       <div class="stats-card" style="padding:8px 0 4px;">
         <div id="sectorBarChart"></div>
       </div>
     </div>
     <!-- Empty placeholder -->
     <div class="stats-section" id="statsEmptyPlaceholder">
-      <div class="stats-title">📊 統計</div>
+      <div class="stats-title"><i class="bi bi-bar-chart"></i> 統計</div>
       <div class="stats-card" style="padding:20px;">
         <div class="stats-placeholder">
           載入 .db 資料後自動顯示：<br><br>
@@ -1527,10 +1544,10 @@ button{cursor:pointer;}
 
 <!-- ── DROP ZONE ── -->
 <div id="dropZone">
-  <div class="dz-icon">🗄️</div>
+  <div class="dz-icon"><i class="bi bi-database-up"></i></div>
   <div class="dz-title">離線看盤</div>
   <div class="dz-sub">拖放 .db 到此處<br>或點下方按鈕選取檔案</div>
-  <label class="dz-btn" for="dbFiles">📂 選取 .db 檔案</label>
+  <label class="dz-btn" for="dbFiles"><i class="bi bi-folder2-open"></i> 選取 .db 檔案</label>
 </div>
 
 <script>
@@ -1691,7 +1708,15 @@ const hideOverlay=()=>byId('overlay').classList.remove('show');
 // PAGE NAVIGATION
 // ════════════════════════════════════════════════
 function switchPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  if(activePage===id)return;
+  const prev=activePage?byId(activePage):document.querySelector('.page.active');
+  if(prev&&prev.id!==id){
+    prev.classList.remove('active');
+    prev.classList.add('leaving');
+    setTimeout(()=>prev.classList.remove('leaving'),190);
+  }else{
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  }
   document.querySelectorAll('.nb').forEach((nb,i)=>{
     const ids=['pgRank','pgChart','pgWatch','pgStats','pgSet'];
     nb.classList.toggle('active',ids[i]===id);
@@ -2321,7 +2346,7 @@ function renderBoard(type){
   }
 
   if(!list.length){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">無符合資料</div><div class="empty-sub">請調整篩選條件</div></div>`;
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="bi bi-search"></i></div><div class="empty-title">無符合資料</div><div class="empty-sub">請調整篩選條件</div></div>`;
     return;
   }
 
@@ -2395,21 +2420,38 @@ function renderBoard(type){
       let extraBadge='';
       if(isWM&&r.startDate){
         const period=r.startDate===r.endDate?r.startDate:`${r.startDate}~${r.endDate}`;
-        extraBadge=`<div style="font-size:11px;color:var(--txt3);margin-top:3px;">📅 ${period}</div>`;
+        extraBadge=`<div style="font-size:11px;color:var(--txt3);margin-top:3px;"><i class="bi bi-calendar3"></i> ${period}</div>`;
       }
 
-      row.innerHTML=`
-        <div class="${rankCls}">${idx+1}</div>
-        <div class="rr2-main">
-          <div class="rr2-name">${r.name}${chainBadge}</div>
-          <div class="rr2-sub">${subParts.join(' · ')}</div>
-          ${extraBadge}
-        </div>
-        <div class="rr2-right">
-          <div class="rr2-price">${fmt(r.close)}</div>
-          <div class="rr2-pct ${upCls}">${pctVal}</div>
-          <div class="rr2-chg ${upCls}">${chgVal}</div>
-        </div>`;
+      if(type==='volume'){
+        row.innerHTML=`
+          <div class="${rankCls}">${idx+1}</div>
+          <div class="rr2-main">
+            <div class="rr2-name">${r.name}${chainBadge}</div>
+            <div class="rr2-sub">${[r.code,r.industry||''].filter(Boolean).join(' · ')}</div>
+          </div>
+          <div class="rr2-mid-volume">
+            <div class="v-val">${fmtLotsFull(r.volume)}</div>
+          </div>
+          <div class="rr2-right">
+            <div class="rr2-price">${fmt(r.close)}</div>
+            <div class="rr2-pct ${upCls}">${pctVal}</div>
+            <div class="rr2-chg ${upCls}">${chgVal}</div>
+          </div>`;
+      }else{
+        row.innerHTML=`
+          <div class="${rankCls}">${idx+1}</div>
+          <div class="rr2-main">
+            <div class="rr2-name">${r.name}${chainBadge}</div>
+            <div class="rr2-sub">${subParts.join(' · ')}</div>
+            ${extraBadge}
+          </div>
+          <div class="rr2-right">
+            <div class="rr2-price">${fmt(r.close)}</div>
+            <div class="rr2-pct ${upCls}">${pctVal}</div>
+            <div class="rr2-chg ${upCls}">${chgVal}</div>
+          </div>`;
+      }
     }
 
     // ── 星號按鈕（加入/移除自選）──
@@ -2451,11 +2493,16 @@ function fmtVol(v){
   if(lots>=1000)return(lots/1000).toFixed(1)+'K張';
   return fmtInt(lots)+'張';
 }
+function fmtLotsFull(v){
+  if(v==null||isNaN(v))return'—';
+  const lots=Math.round(v/1000);
+  return `${fmtInt(lots)}張`;
+}
 
 // ── Sector ranking render ──
 function renderSectorRank(sectors,container){
   if(!sectors||!sectors.length){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">無類股資料</div></div>`;
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="bi bi-search"></i></div><div class="empty-title">無類股資料</div></div>`;
     return;
   }
   sectors.forEach((s,idx)=>{
@@ -2869,7 +2916,7 @@ function renderSectorDetailChart(container){
   container.innerHTML='';
   const rows=(dayRows||[]).filter(r=>!isIndexRow(r));
   if(!rows.length){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">無資料</div></div>`;
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="bi bi-bar-chart-line"></i></div><div class="empty-title">無資料</div></div>`;
     return;
   }
 
@@ -2957,12 +3004,13 @@ function renderSectorDetailChart(container){
 // DISTRIBUTION DETAIL CHART
 // ════════════════════════════════════════════════
 let _distDetailChart=null;
+let distViewMode='bar';
 function renderDistDetailChart(container){
   container.style.cssText='overflow-y:auto;flex:1;display:flex;flex-direction:column;';
   container.innerHTML='';
   const rows=(dayRows||[]).filter(r=>!isIndexRow(r));
   if(!rows.length){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">無資料</div></div>`;
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="bi bi-pie-chart"></i></div><div class="empty-title">無資料</div></div>`;
     return;
   }
 
@@ -2972,13 +3020,18 @@ function renderDistDetailChart(container){
 
   // 摘要列
   const strip=document.createElement('div');
-  strip.style.cssText='display:flex;align-items:center;gap:16px;padding:10px 16px;background:var(--bg1);border-bottom:1px solid var(--brd);flex-shrink:0;font-size:12px;color:var(--txt3);';
-  strip.innerHTML=`共 <b style="color:var(--txt);margin:0 2px">${total}</b> 檔 · 點擊柱狀可查看個股`;
+  strip.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--bg1);border-bottom:1px solid var(--brd);flex-shrink:0;';
+  strip.innerHTML=`
+    <div style="font-size:12px;color:var(--txt3);">共 <b style="color:var(--txt);margin:0 2px">${total}</b> 檔 · 點擊圖形可查看個股</div>
+    <div id="distViewSeg" style="display:inline-flex;gap:4px;background:var(--bg3);border:1px solid var(--brd);border-radius:10px;padding:3px;">
+      <button id="distViewBar" style="border:none;background:none;color:var(--txt2);font-size:11px;font-weight:700;padding:6px 10px;border-radius:7px;">柱狀</button>
+      <button id="distViewPie" style="border:none;background:none;color:var(--txt2);font-size:11px;font-weight:700;padding:6px 10px;border-radius:7px;">圓餅</button>
+    </div>`;
   container.appendChild(strip);
 
   // Chart
   const chartDiv=document.createElement('div');
-  chartDiv.style.cssText='width:100%;height:360px;flex-shrink:0;';
+  chartDiv.style.cssText='width:100%;height:380px;flex-shrink:0;';
   container.appendChild(chartDiv);
 
   if(_distDetailChart){_distDetailChart.dispose();_distDetailChart=null;}
@@ -2988,46 +3041,90 @@ function renderDistDetailChart(container){
   const barColors=['#4a6fa5','#5a82b8','#6a96cb','#7aabde','#8bbff1',
                    '#a0c8f0','#f6c445','#f0a830'];
 
-  _distDetailChart.setOption({
-    backgroundColor:'transparent',
-    grid:{left:44,right:14,top:20,bottom:72},
-    xAxis:{
-      type:'category',
-      data:stats.map(s=>s.range),
-      axisLabel:{color:'#8e8e93',fontSize:10,rotate:30,interval:0},
-      axisLine:{lineStyle:{color:'rgba(255,255,255,.08)'}},
-      axisTick:{show:false},
-    },
-    yAxis:{
-      type:'value',
-      name:'股票數',
-      nameTextStyle:{color:'#8e8e93',fontSize:11},
-      axisLabel:{color:'#8e8e93',fontSize:11},
-      splitLine:{lineStyle:{color:'rgba(255,255,255,.05)'}},
-      axisLine:{show:false},
-    },
-    series:[{
-      type:'bar',
-      data:stats.map((s,i)=>({
-        value:s.count,
-        itemStyle:{color:barColors[i]||'#f6c445',borderRadius:[4,4,0,0]}
-      })),
-      barMaxWidth:40,
-      label:{show:true,position:'top',formatter:p=>p.value>0?p.value:'',color:'#c8c8cc',fontSize:12,fontWeight:600}
-    }],
-    tooltip:{
-      trigger:'item',backgroundColor:'rgba(0,0,0,.92)',borderColor:'rgba(246,196,69,.3)',
-      textStyle:{color:'#e5e7eb',fontSize:12},
-      formatter:p=>{
-        const s=stats[p.dataIndex];
-        const pct=Math.round(s.count/total*100);
-        return `<b>${s.range}</b><br>股票數：<b>${s.count}</b>（${pct}%）`;
-      }
+  function setDistSegActive(mode){
+    const barBtn=byId('distViewBar'),pieBtn=byId('distViewPie');
+    if(!barBtn||!pieBtn)return;
+    const act=(btn,on)=>{btn.style.background=on?'rgba(246,196,69,.16)':'transparent';btn.style.color=on?'var(--acc)':'var(--txt2)';};
+    act(barBtn,mode==='bar');act(pieBtn,mode==='pie');
+  }
+
+  function applyDistChart(mode){
+    distViewMode=mode;
+    setDistSegActive(mode);
+    if(mode==='pie'){
+      _distDetailChart.setOption({
+        backgroundColor:'transparent',
+        tooltip:{
+          trigger:'item',backgroundColor:'rgba(0,0,0,.92)',borderColor:'rgba(246,196,69,.3)',
+          textStyle:{color:'#e5e7eb',fontSize:12},
+          formatter:p=>{
+            const s=stats[p.dataIndex];
+            const pct=Math.round(s.count/total*100);
+            return `<b>${s.range}</b><br>股票數：<b>${s.count}</b>（${pct}%）`;
+          }
+        },
+        series:[{
+          name:'股價分布',
+          type:'pie',
+          radius:['34%','68%'],
+          center:['50%','52%'],
+          padAngle:1,
+          minAngle:2,
+          itemStyle:{borderColor:'rgba(0,0,0,.35)',borderWidth:1},
+          label:{color:'#c8c8cc',fontSize:11,formatter:p=>`${p.name}\n${p.value}`},
+          labelLine:{lineStyle:{color:'rgba(255,255,255,.22)'},length:12,length2:10},
+          data:stats.map((s,i)=>({name:s.range,value:s.count,itemStyle:{color:barColors[i]||'#f6c445'}}))
+        }]
+      },true);
+      return;
     }
-  },true);
+    _distDetailChart.setOption({
+      backgroundColor:'transparent',
+      grid:{left:44,right:14,top:20,bottom:72},
+      xAxis:{
+        type:'category',
+        data:stats.map(s=>s.range),
+        axisLabel:{color:'#8e8e93',fontSize:10,rotate:30,interval:0},
+        axisLine:{lineStyle:{color:'rgba(255,255,255,.08)'}},
+        axisTick:{show:false},
+      },
+      yAxis:{
+        type:'value',
+        name:'股票數',
+        nameTextStyle:{color:'#8e8e93',fontSize:11},
+        axisLabel:{color:'#8e8e93',fontSize:11},
+        splitLine:{lineStyle:{color:'rgba(255,255,255,.05)'}},
+        axisLine:{show:false},
+      },
+      series:[{
+        type:'bar',
+        data:stats.map((s,i)=>({
+          name:s.range,
+          value:s.count,
+          itemStyle:{color:barColors[i]||'#f6c445',borderRadius:[4,4,0,0]}
+        })),
+        barMaxWidth:40,
+        label:{show:true,position:'top',formatter:p=>p.value>0?p.value:'',color:'#c8c8cc',fontSize:12,fontWeight:600}
+      }],
+      tooltip:{
+        trigger:'item',backgroundColor:'rgba(0,0,0,.92)',borderColor:'rgba(246,196,69,.3)',
+        textStyle:{color:'#e5e7eb',fontSize:12},
+        formatter:p=>{
+          const s=stats[p.dataIndex];
+          const pct=Math.round(s.count/total*100);
+          return `<b>${s.range}</b><br>股票數：<b>${s.count}</b>（${pct}%）`;
+        }
+      }
+    },true);
+  }
+
+  applyDistChart(distViewMode==='pie'?'pie':'bar');
+  byId('distViewBar')?.addEventListener('click',()=>applyDistChart('bar'));
+  byId('distViewPie')?.addEventListener('click',()=>applyDistChart('pie'));
 
   _distDetailChart.on('click',p=>{
-    const s=stats[p.dataIndex];
+    const idx=(typeof p.dataIndex==='number')?p.dataIndex:stats.findIndex(s=>s.range===p.name);
+    const s=stats[idx];
     if(!s||!s.count)return;
     openPriceStatsModal(s,rows);
   });
@@ -3460,126 +3557,6 @@ function getMarkerX(){
   return currentDate;
 }
 
-// ════════════════════════════════════════════════
-// TPEx INDUSTRY CHAIN API — 公司基本資料
-// ════════════════════════════════════════════════
-const companyInfoCache=new Map(); // code -> {market, industry_cat, business, products, chains, ...}
-let cpApiRunning=false;
-
-async function fetchCompanyBasic(code){
-  if(companyInfoCache.has(code)) return companyInfoCache.get(code);
-  const info={market:null,industry_cat:null,business:null,products:null,chains:[]};
-  try{
-    // 1) 從 TWSE ISIN 判斷市場別與產業類別
-    const isinUrls=[
-      {url:'https://isin.twse.com.tw/isin/C_public.jsp?strMode=2',market:'上市'},
-      {url:'https://isin.twse.com.tw/isin/C_public.jsp?strMode=4',market:'上櫃'},
-      {url:'https://isin.twse.com.tw/isin/C_public.jsp?strMode=5',market:'興櫃'},
-    ];
-    // Use Anthropic API to fetch and parse
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:2000,
-        tools:[{type:'web_search_20250305',name:'web_search'}],
-        messages:[{role:'user',content:
-          `查詢台灣股票代號 ${code} 的以下資料，用繁體中文回答。\n`+
-          `1. 市場別（上市/上櫃/興櫃）\n`+
-          `2. 產業類別\n`+
-          `3. 主要經營業務（簡短描述）\n`+
-          `4. 主要產品介紹（列出主要產品線）\n`+
-          `5. 所屬產業價值鏈（從 ic.tpex.org.tw 查詢）\n\n`+
-          `回傳格式必須是純JSON，不要markdown：\n`+
-          `{"market":"上市或上櫃或興櫃","industry_cat":"產業類別","business":"主要經營業務描述","products":"產品介紹","chains":["產業鏈名稱1","產業鏈名稱2"]}`
-        }]
-      })
-    });
-    const data=await resp.json();
-    const text=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
-    const match=text.match(/\{[\s\S]*\}/);
-    if(match){
-      const parsed=JSON.parse(match[0]);
-      Object.assign(info,parsed);
-    }
-  }catch(e){
-    console.warn('fetchCompanyBasic error:',e);
-  }
-  companyInfoCache.set(code,info);
-  return info;
-}
-
-function toggleCompanyPanel(){
-  const panel=byId('companyPanel');
-  const arrow=byId('cpArrow');
-  const isOpen=panel.classList.toggle('open');
-  arrow.classList.toggle('open',isOpen);
-}
-
-function renderCompanyPanel(code,info){
-  const inner=byId('companyPanelInner');
-  if(!info||(!info.market&&!info.business&&!info.products)){
-    inner.innerHTML=`<div class="cp-loading">查無公司資料</div>`;
-    return;
-  }
-  let chainsHtml='';
-  if(info.chains&&info.chains.length){
-    chainsHtml=`<div class="cp-row"><div class="cp-lbl">產業鏈</div><div class="cp-val"><div class="cp-tags">${info.chains.map(c=>`<span class="cp-tag">${c}</span>`).join('')}</div></div></div>`;
-  }
-  inner.innerHTML=`
-    ${info.market?`<div class="cp-row"><div class="cp-lbl">市場別</div><div class="cp-val">${info.market}</div></div>`:''}
-    ${info.industry_cat?`<div class="cp-row"><div class="cp-lbl">產業類別</div><div class="cp-val">${info.industry_cat}</div></div>`:''}
-    ${info.business?`<div class="cp-row"><div class="cp-lbl">經營業務</div><div class="cp-val">${info.business}</div></div>`:''}
-    ${info.products?`<div class="cp-row"><div class="cp-lbl">產品介紹</div><div class="cp-val">${info.products}</div></div>`:''}
-    ${chainsHtml}
-  `;
-}
-
-function setMarketBadge(info){
-  const el=byId('chartMktBadge');
-  if(!info||!info.market){el.innerHTML='';return;}
-  const m=info.market;
-  let cls='twse';
-  if(m.includes('櫃'))cls='tpex';
-  else if(m.includes('興'))cls='emer';
-  el.innerHTML=`<span class="mkt-badge ${cls}">${m}</span>`;
-}
-
-async function loadCompanyInfo(code){
-  const toggle=byId('cpToggle');
-  const panel=byId('companyPanel');
-  const inner=byId('companyPanelInner');
-  toggle.style.display='flex';
-  panel.classList.remove('open');
-  byId('cpArrow').classList.remove('open');
-  // Show cached if available
-  if(companyInfoCache.has(code)){
-    const info=companyInfoCache.get(code);
-    setMarketBadge(info);
-    renderCompanyPanel(code,info);
-    return;
-  }
-  // Clear badge & show loading
-  setMarketBadge(null);
-  inner.innerHTML=`<div class="cp-loading">⏳ 正在查詢公司資料...</div>`;
-  if(cpApiRunning)return;
-  cpApiRunning=true;
-  try{
-    const info=await fetchCompanyBasic(code);
-    // Only update if still on same stock
-    if(lastSymbol===code){
-      setMarketBadge(info);
-      renderCompanyPanel(code,info);
-    }
-  }catch(e){
-    if(lastSymbol===code){
-      inner.innerHTML=`<div class="cp-loading">查詢失敗</div>`;
-    }
-  }
-  cpApiRunning=false;
-}
-
 async function fetchSeries(symbol){
   const out=[];
   let limitDate=null;
@@ -3620,8 +3597,6 @@ async function showSymbol(code,name){
   lastSymbol=code;lastName=name;
   byId('chartName').textContent=name;
   byId('chartCode').textContent=code;
-  // Trigger company info fetch (non-blocking)
-  loadCompanyInfo(code);
   const daily=await fetchSeries(code);
   if(!daily.length){showToast('無 K 線資料','err');return;}
   const series=resample(daily,timeframe);
@@ -3698,7 +3673,7 @@ function updateChartInfo(i){
   const chg=prev?d.c-prev.c:0,pct=prev&&prev.c?(d.c/prev.c-1)*100:0;
   const c=chg>=0?'var(--up)':'var(--dn)';
   byId('ciRow').innerHTML=`
-    <span class="ci-item"><span class="lbl">📅</span><span class="val">${dates[i]}</span></span>
+    <span class="ci-item"><span class="lbl"><i class="bi bi-calendar3"></i></span><span class="val">${dates[i]}</span></span>
     <span class="ci-item"><span class="lbl">開</span><span class="val" style="color:${c}">${fmt(d.o)}</span></span>
     <span class="ci-item"><span class="lbl">高</span><span class="val" style="color:${c}">${fmt(d.h)}</span></span>
     <span class="ci-item"><span class="lbl">低</span><span class="val" style="color:${c}">${fmt(d.l)}</span></span>
@@ -3779,7 +3754,7 @@ async function onFilesSelected(files){
   sel.value=currentDate;
   byId('dbStatus').textContent=`${files.length} 個DB · ${allDates.length} 交易日`;
   hideOverlay();
-  showToast(`✅ 載入成功：${allDates.length} 個交易日`,'ok',2500);
+  showToast(`載入成功：${allDates.length} 個交易日`,'ok',2500);
   await loadDay(currentDate);
 }
 
@@ -3824,7 +3799,7 @@ function enterDetail(type){
   // Title
   byId('detailTitleMain').textContent=HUB_LABELS[type]||type;
   byId('detailTitleEn').textContent=HUB_EN[type]||'';
-  // Stats bar & col header
+  // Column header
   renderDetailExtras(type);
   if(type==='weekly')ensureAgg('weekly').then(()=>renderBoard(type));
   else if(type==='monthly')ensureAgg('monthly').then(()=>renderBoard(type));
@@ -3832,27 +3807,9 @@ function enterDetail(type){
 }
 
 function renderDetailExtras(type){
-  const isRedGreen=['gainers','losers','limitup','volume','value'].includes(type);
   const isVol=['vol_surge','vol_ratio','up3days','up5days','breakout'].includes(type);
-  const statsBar=byId('detailStatsBar');
+  const isVolBoard=(type==='volume');
   const colHdr=byId('detailColHdr');
-
-  // Stats bar (only for 紅綠類)
-  if(isRedGreen){
-    statsBar.style.display='grid';
-    const rows=(dayRows||[]).filter(r=>!isIndexRow(r));
-    const L=dynamicLimit(currentDate)-0.1;
-    const up=rows.filter(r=>(r.pct??0)>0).length;
-    const dn=rows.filter(r=>(r.pct??0)<0).length;
-    const flat=rows.filter(r=>(r.pct??0)===0).length;
-    const lim=rows.filter(r=>(r.pct??-999)>=L).length;
-    byId('dsb-up').textContent=up;
-    byId('dsb-dn').textContent=dn;
-    byId('dsb-flat').textContent=flat;
-    byId('dsb-limit').textContent=lim;
-  }else{
-    statsBar.style.display='none';
-  }
 
   // Column header
   if(type==='price_stats'||type==='sector_rank'){
@@ -3861,11 +3818,22 @@ function renderDetailExtras(type){
   }
   colHdr.style.display='flex';
   const col1=byId('dch-col1'), col2=byId('dch-col2');
+  if(isVolBoard){
+    col1.style.minWidth='130px';
+    col1.style.textAlign='center';
+    col2.style.minWidth='52px';
+    col2.style.textAlign='right';
+  }else{
+    col1.style.minWidth='';
+    col1.style.textAlign='right';
+    col2.style.minWidth='';
+    col2.style.textAlign='right';
+  }
 
   // Sort key mapping per board type
-  const k1 = isVol ? 'volume' : 'amt';
+  const k1 = (isVol||isVolBoard) ? 'volume' : 'amt';
   const k2 = isVol ? 'volChg' : 'pct';
-  const lbl1 = isVol ? '今量' : '成交';
+  const lbl1 = isVol ? '今量' : (isVolBoard ? '成交量(張)' : '成交');
   const lbl2 = isVol ? '倍率' : '漲%';
 
   // col2 is the default sort (when sortState.key===null)
@@ -3929,6 +3897,27 @@ function updateHubPreviews(){
   _setHV('hub-hundred',  rows.filter(r=>(r.close||0)>=100).length+'檔');
   _setHV('hub-fivehundred', rows.filter(r=>(r.close||0)>=500).length+'檔');
   _setHV('hub-thousand',  rows.filter(r=>(r.close||0)>=1000).length+'檔');
+
+  // Feature: sector rank preview
+  const sectors=computeSectorRank(rows);
+  if(sectors.length){
+    const topSec=sectors[0];
+    _setHV('hf-sector-top', topSec.industry||'--');
+    _setHV('hf-sector-top-sub', `平均 ${fmt(topSec.avgPct)}% ・ ${topSec.stocks.length} 檔`);
+    const upTotal=sectors.reduce((s,g)=>s+(g.up||0),0);
+    const dnTotal=sectors.reduce((s,g)=>s+(g.dn||0),0);
+    _setHV('hf-sector-up', `${upTotal}`);
+    _setHV('hf-sector-dn-sub', `下跌 ${dnTotal}`);
+  }
+
+  // Feature: price distribution preview
+  const dist=computePriceStats(rows);
+  const topBucket=dist.slice().sort((a,b)=>b.count-a.count)[0];
+  if(topBucket){
+    _setHV('hf-dist-main', `${topBucket.count}`);
+    _setHV('hf-dist-main-sub', topBucket.range);
+  }
+  _setHV('hf-dist-100', rows.filter(r=>(r.close||0)>=100).length+'檔');
 }
 
 function _setHV(id,txt){const el=byId(id);if(el)el.textContent=txt;}
@@ -3988,14 +3977,14 @@ byId('watchAddBtn').addEventListener('click',async()=>{
   const codes=loadWatchlistCodes();
   if(!codes.includes(lastSymbol))codes.push(lastSymbol);
   saveWatchlistCodes(codes);watchlistRows=[];watchlistKey=null;
-  updateWatchButtons();showToast('⭐ 已加入自選股','ok');
+  updateWatchButtons();showToast('已加入自選股','ok');
   if(activePage==='pgWatch')renderWatchlist();
 });
 byId('watchRemoveBtn').addEventListener('click',async()=>{
   if(!lastSymbol)return;
   const codes=loadWatchlistCodes().filter(c=>c!==lastSymbol);
   saveWatchlistCodes(codes);watchlistRows=[];watchlistKey=null;
-  updateWatchButtons();showToast('🗑 已移除','');
+  updateWatchButtons();showToast('已移除','');
   if(activePage==='pgWatch')renderWatchlist();
 });
 byId('watchClearBtn').addEventListener('click',async()=>{
@@ -4101,7 +4090,7 @@ async function tryLoadChainDB(dbObj){
       chainSubMap.get(code).push({i:ind,s:sub});
     });
     chainLoaded=true;
-    showToast(`✅ 產業鏈資料載入：${chainMap.size} 檔`,  'ok', 2000);
+    showToast(`產業鏈資料載入：${chainMap.size} 檔`,  'ok', 2000);
     return true;
   }catch(e){return false;}
 }
@@ -4114,15 +4103,56 @@ window.addEventListener('keydown',e=>{
   else if(e.key==='ArrowDown'){e.preventDefault();moveSelection(1);}
 });
 
-// Touch swipe to close filter drawer
-document.addEventListener('touchstart',e=>{
-  if(!byId('filterDrawer').classList.contains('open'))return;
-  const target=e.target;
-  if(!byId('filterDrawer').contains(target)){
-    byId('filterDrawer').classList.remove('open');
-    byId('filterToggle').classList.remove('active');
+// Touch gesture to close filter drawer (tap outside + swipe down)
+(function(){
+  const drawer=byId('filterDrawer');
+  const toggle=byId('filterToggle');
+  if(!drawer||!toggle)return;
+  let dragging=false,startY=0,deltaY=0;
+
+  document.addEventListener('touchstart',e=>{
+    if(!drawer.classList.contains('open'))return;
+    const target=e.target;
+    if(!drawer.contains(target)){
+      drawer.classList.remove('open');
+      toggle.classList.remove('active');
+    }
+  });
+
+  drawer.addEventListener('touchstart',e=>{
+    if(!drawer.classList.contains('open'))return;
+    if(e.touches.length!==1)return;
+    const targetTag=(e.target&&e.target.tagName)?e.target.tagName.toUpperCase():'';
+    if(targetTag==='INPUT'||targetTag==='SELECT'||targetTag==='TEXTAREA')return;
+    dragging=true;
+    startY=e.touches[0].clientY;
+    deltaY=0;
+    drawer.classList.add('dragging');
+  },{passive:true});
+
+  drawer.addEventListener('touchmove',e=>{
+    if(!dragging)return;
+    deltaY=Math.max(0,e.touches[0].clientY-startY);
+    drawer.style.transform=`translateY(${deltaY}px)`;
+    if(deltaY>0)e.preventDefault();
+  },{passive:false});
+
+  function finishDrag(){
+    if(!dragging)return;
+    const shouldClose=deltaY>90;
+    dragging=false;
+    drawer.classList.remove('dragging');
+    drawer.style.transform='';
+    if(shouldClose){
+      drawer.classList.remove('open');
+      toggle.classList.remove('active');
+    }
+    deltaY=0;
   }
-});
+
+  drawer.addEventListener('touchend',finishDrag);
+  drawer.addEventListener('touchcancel',finishDrag);
+})();
 
 // When switching to watchlist page, auto-render
 document.querySelectorAll('.nb').forEach((nb,i)=>{
