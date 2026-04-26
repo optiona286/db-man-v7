@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
 <script>
 (function(){
@@ -56,6 +57,10 @@
   --txt3:    #8e8e93;
   --brd:     rgba(255,255,255,.07);
   --brd2:    rgba(255,255,255,.04);
+  --hdr-bg:  rgba(0,0,0,.92);
+  --nav-bg:  rgba(0,0,0,.95);
+  --hdr-brd: rgba(246,196,69,.2);
+  --nav-brd: rgba(246,196,69,.15);
   --r8:      8px;
   --r12:     12px;
   --r16:     16px;
@@ -65,6 +70,27 @@
   --safe-b:  env(safe-area-inset-bottom,0px);
   --mono:    'SF Mono', 'Menlo', 'Cascadia Code', monospace;
   --sans:    -apple-system,'PingFang TC','Helvetica Neue',Arial,sans-serif;
+}
+:root[data-theme="light"]{
+  --bg:      #f4f6fb;
+  --bg1:     #edf1f8;
+  --bg2:     #ffffff;
+  --bg3:     #eef2f8;
+  --bg4:     #e6ecf5;
+  --bg5:     #dfe7f3;
+  --acc:     #a66a00;
+  --acc2:    #c07a00;
+  --up:      #d93025;
+  --dn:      #138a3f;
+  --txt:     #1b2430;
+  --txt2:    #415063;
+  --txt3:    #6a7788;
+  --brd:     rgba(23,35,52,.14);
+  --brd2:    rgba(23,35,52,.08);
+  --hdr-bg:  rgba(244,246,251,.92);
+  --nav-bg:  rgba(244,246,251,.95);
+  --hdr-brd: rgba(166,106,0,.28);
+  --nav-brd: rgba(166,106,0,.2);
 }
 
 /* ── RESET ── */
@@ -88,9 +114,9 @@ button{cursor:pointer;}
   position:fixed;left:0;right:0;top:0;
   height:calc(var(--hdr-h) + var(--safe-t));
   padding-top:var(--safe-t);
-  background:rgba(0,0,0,.92);
+  background:var(--hdr-bg);
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(246,196,69,.2);
+  border-bottom:1px solid var(--hdr-brd);
   display:flex;align-items:center;gap:8px;padding-left:14px;padding-right:10px;
   z-index:100;
 }
@@ -99,7 +125,7 @@ button{cursor:pointer;}
   color:var(--acc);flex-shrink:0;
   font-family:var(--mono);
 }
-.hdr-logo em{color:#fff;font-style:normal;}
+.hdr-logo em{color:var(--txt);font-style:normal;}
 .hdr-status{
   flex:1;min-width:0;
   font-size:11px;color:var(--txt2);
@@ -116,6 +142,10 @@ button{cursor:pointer;}
 }
 .hdr-btn:active{background:var(--bg5);}
 .hdr-btn.acc{background:rgba(246,196,69,.12);border-color:rgba(246,196,69,.4);color:var(--acc);}
+.hdr-btn.theme{
+  width:44px;padding:10px 0;
+  display:inline-flex;align-items:center;justify-content:center;
+}
 #dbFiles{display:none;}
 
 /* ── BOTTOM NAV ── */
@@ -123,9 +153,9 @@ button{cursor:pointer;}
   position:fixed;left:0;right:0;bottom:0;
   height:calc(var(--nav-h) + var(--safe-b));
   padding-bottom:var(--safe-b);
-  background:rgba(0,0,0,.95);
+  background:var(--nav-bg);
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-top:1px solid rgba(246,196,69,.15);
+  border-top:1px solid var(--nav-brd);
   display:flex;z-index:100;
 }
 .nb{
@@ -364,11 +394,21 @@ button{cursor:pointer;}
 
 /* Filter bar */
 .filter-bar{
+  position:fixed;left:10px;right:10px;
+  bottom:calc(var(--nav-h) + 12px + var(--safe-b));
+  z-index:92;
   display:flex;align-items:center;gap:6px;
-  padding:8px 12px;background:var(--bg1);
-  border-bottom:1px solid var(--brd);
-  flex-shrink:0;overflow-x:auto;
+  padding:8px;background:rgba(17,17,17,.94);
+  border:1px solid var(--brd);
+  border-radius:14px;
+  box-shadow:0 14px 32px rgba(0,0,0,.38);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  overflow-x:auto;
+  transform:translateY(calc(100% + 18px));
+  opacity:0;pointer-events:none;
+  transition:transform .24s cubic-bezier(.22,.61,.36,1),opacity .2s ease;
 }
+.filter-bar.open{transform:translateY(0);opacity:1;pointer-events:auto;}
 .filter-bar::-webkit-scrollbar{display:none;}
 .filter-bar input,.filter-bar select{
   background:var(--bg3);border:1px solid var(--brd);
@@ -387,6 +427,21 @@ button{cursor:pointer;}
   display:flex;align-items:center;
 }
 .filter-toggle.active{border-color:rgba(246,196,69,.4);color:var(--acc);}
+.rank-filter-fab{
+  position:fixed;right:14px;
+  bottom:calc(var(--nav-h) + 18px + var(--safe-b));
+  z-index:93;width:44px;height:44px;border-radius:50%;
+  background:rgba(20,20,20,.62);
+  border:1.5px solid rgba(246,196,69,.38);
+  color:var(--acc);font-size:12px;font-weight:900;
+  box-shadow:0 8px 24px rgba(0,0,0,.34);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  opacity:.62;transition:opacity .18s,transform .18s,background .18s;
+}
+.rank-filter-fab.active{
+  opacity:.95;transform:translateY(-68px);
+  background:rgba(246,196,69,.18);
+}
 
 /* Rank list */
 .rank-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
@@ -565,6 +620,33 @@ button{cursor:pointer;}
   padding:0 2px;
 }
 .hm-cell:active{opacity:.7;}
+.hm-title-sub{font-size:10px;color:var(--txt3);font-family:var(--mono);font-weight:600;}
+.hm-toolbar{
+  display:flex;gap:8px;align-items:center;justify-content:space-between;
+  padding:8px 10px;border-bottom:1px solid var(--brd2);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.hm-toolbar::-webkit-scrollbar{display:none;}
+.hm-tb-group{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.hm-tb-label{font-size:10px;color:var(--txt3);font-weight:700;}
+.hm-chip{
+  background:var(--bg3);border:1px solid var(--brd);
+  color:var(--txt2);border-radius:7px;
+  padding:5px 8px;font-size:11px;font-weight:800;
+}
+.hm-chip.active{
+  background:rgba(246,196,69,.14);
+  border-color:rgba(246,196,69,.45);
+  color:var(--acc);
+}
+.hm-tip{
+  background:rgba(0,0,0,.92);border:1px solid rgba(246,196,69,.35);
+  border-radius:8px;padding:8px 10px;color:var(--txt);
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+.hm-tip-name{display:block;color:var(--acc);font-weight:800;font-size:13px;margin-bottom:5px;}
+.hm-tip-row{display:flex;justify-content:space-between;gap:16px;font-size:12px;line-height:1.65;}
+.hm-tip-lbl{color:var(--txt3);}
 
 /* Sector bar chart */
 #sectorBarChart{width:100%;height:400px;}
@@ -631,28 +713,101 @@ button{cursor:pointer;}
 /* ── PAGE: CHART ── */
 #pgChart{background:var(--bg);}
 .chart-hdr{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 12px;background:var(--bg1);
+  display:flex;flex-direction:column;gap:12px;
+  padding:14px 14px 10px;background:var(--bg1);
   border-bottom:1px solid var(--brd);
-  flex-shrink:0;flex-wrap:wrap;
+  flex-shrink:0;
+  max-width:100%;overflow:hidden;
 }
-.chart-title{font-size:14px;font-weight:700;color:var(--txt);flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.chart-title .code{color:var(--txt2);font-size:12px;font-family:var(--mono);}
+.chart-stock-row{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;}
+.chart-title{
+  font-size:14px;font-weight:700;color:var(--txt);
+  flex:1;min-width:0;display:flex;align-items:baseline;gap:8px;
+  flex-wrap:nowrap;overflow:hidden;white-space:nowrap;
+  max-width:100%;-webkit-overflow-scrolling:touch;
+}
+.chart-title::-webkit-scrollbar{display:none;}
+.chart-main-item{
+  font-size:15px;font-weight:800;line-height:1.1;
+  font-family:var(--mono);color:var(--txt);
+}
+#chartName{font-family:var(--sans);max-width:42vw;overflow:hidden;text-overflow:ellipsis;}
+#chartCode{color:var(--txt3);font-size:12px;font-weight:700;min-width:0;}
+#chartPct{display:none !important;}
+#chartName{order:1;}
+#chartCode{order:2;}
+#chartPrice{order:3;}
+#chartDiff{order:4;}
+#chartPrice.up,#chartDiff.up{color:var(--up);}
+#chartPrice.dn,#chartDiff.dn{color:var(--dn);}
+.chart-watch-btn{
+  border:0;background:transparent;color:var(--txt3);
+  font-size:12px;font-weight:700;white-space:nowrap;
+  min-height:28px;padding:3px 0 3px 8px;
+}
+.chart-watch-btn.on{color:var(--acc);}
+.chart-price-row{display:none;}
+#chartName,
+#chartPrice,
+#chartDiff,
+.chart-kpi .kpi-val{
+  font-family:'Noto Sans TC','Microsoft JhengHei','Heiti TC',sans-serif;
+}
+#chartName{
+  font-size:30px;font-weight:900;letter-spacing:.2px;line-height:1;
+}
+#chartPrice{
+  font-size:30px;font-weight:900;letter-spacing:.5px;line-height:1;
+}
+#chartDiff{
+  font-size:12px;font-weight:900;line-height:1;
+  padding:6px 9px;border-radius:5px;
+  background:rgba(142,142,147,.16);color:var(--txt2);
+  white-space:nowrap;
+}
+#chartDiff.up{background:rgba(255,59,48,.18);color:var(--up);}
+#chartDiff.dn{background:rgba(50,215,75,.14);color:var(--dn);}
+#chartDiff.limit-up,
+#chartDiff.limit-dn{
+  color:#fff;border-radius:5px;
+}
+#chartDiff.limit-up{background:#cf1e17;}
+#chartDiff.limit-dn{background:#1e8c3c;}
+.chart-kpis{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:10px;width:100%;
+}
+.chart-kpi{min-width:0;text-align:center;}
+.chart-kpi .kpi-lbl{
+  display:block;font-size:10px;font-weight:700;color:var(--txt3);
+  line-height:1.2;margin-bottom:3px;
+}
+.chart-kpi .kpi-val{
+  display:block;font-size:13px;font-weight:900;
+  color:var(--txt2);line-height:1.1;overflow:hidden;text-overflow:ellipsis;
+}
+.chart-kpi .kpi-val.up{color:var(--up);}
+.chart-kpi .kpi-val.dn{color:var(--dn);}
+.chart-kpi .kpi-val.flat{color:var(--txt2);}
 
-.tf-seg{display:flex;gap:4px;}
-.tf-btn{
-  background:var(--bg3);border:1px solid var(--brd);
-  color:var(--txt2);border-radius:var(--r8);
-  min-height:40px;
-  padding:8px 14px;font-size:13px;font-weight:700;
+.tf-seg{
+  display:flex;gap:4px;flex-shrink:0;width:100%;
+  background:var(--bg3);border-radius:8px;padding:3px;
 }
-.tf-btn.active{background:rgba(246,196,69,.14);border-color:rgba(246,196,69,.4);color:var(--acc);}
-.chart-nav{display:flex;gap:6px;}
+.tf-btn{
+  flex:1;background:transparent;border:0;
+  color:var(--txt2);border-radius:var(--r8);
+  min-height:34px;
+  padding:7px 8px;font-size:12px;font-weight:800;
+}
+.tf-btn.active{background:var(--bg5);color:var(--txt);}
+.tf-btn:disabled{opacity:.45;color:var(--txt3);}
+.chart-nav{display:none;gap:6px;flex-shrink:0;}
 .chart-nav button{
   background:var(--bg3);border:1px solid var(--brd);
   color:var(--txt2);border-radius:var(--r8);
-  min-height:40px;
-  padding:8px 14px;font-size:13px;font-weight:700;
+  min-height:34px;
+  padding:7px 14px;font-size:12px;font-weight:800;
 }
 .chart-nav button:active{background:var(--bg5);}
 
@@ -661,18 +816,115 @@ button{cursor:pointer;}
   border-bottom:1px solid var(--brd2);
   font-size:12px;font-family:var(--mono);
   flex-shrink:0;
-  overflow:hidden;
+  overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
 }
 .chart-info::-webkit-scrollbar{display:none;}
 .ci-row{
-  display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;
+  display:flex;flex-wrap:nowrap;gap:10px;align-items:center;
   min-height:20px;
+  white-space:nowrap;
+  width:max-content;min-width:100%;
 }
-.ci-item{display:flex;align-items:center;gap:3px;}
+.ci-line{display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+.ci-item{display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;}
 .ci-item .lbl{color:var(--txt3);font-size:11px;}
 .ci-item .val{font-weight:700;font-size:12px;}
+.ci-ma-label,.ci-ma{flex:0 0 auto;}
 
-#kchart{flex:1;min-height:280px;background:var(--bg);}
+#kchart{display:none;}
+#kchartWrap{
+  position:relative;flex:1;min-height:280px;
+  width:100%;max-width:100%;min-width:0;
+  display:flex;flex-direction:column;
+  background:var(--bg);overflow:hidden;
+}
+#kchartMain{
+  position:relative;flex:7;min-height:160px;
+  overflow:hidden;background:var(--bg);
+}
+#kchartVol{
+  position:relative;flex:3;min-height:74px;
+  overflow:hidden;background:var(--bg);
+  border-top:1px solid var(--brd2);
+}
+#kTooltip{
+  position:absolute;pointer-events:none;z-index:9999;
+  background:rgba(0,0,0,.92);border:1px solid rgba(246,196,69,.4);
+  border-radius:6px;padding:6px 9px;
+  font-family:var(--mono);font-size:11px;color:#e5e7eb;
+  line-height:1.55;white-space:nowrap;
+  display:none;min-width:168px;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+}
+#kTooltip .kt-date{color:var(--acc);font-weight:700;font-size:12px;margin-bottom:2px;display:block;}
+#kTooltip .kt-row{display:flex;gap:6px;flex-wrap:wrap;}
+#kTooltip .kt-lbl{color:var(--txt3);font-size:11px;}
+#kTooltip .kt-val{font-weight:700;}
+#volInfoOverlay{
+  position:absolute;left:8px;top:3px;
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  display:flex;gap:8px;align-items:center;
+  pointer-events:none;z-index:9999;white-space:nowrap;
+  background:rgba(0,0,0,.35);padding:1px 5px;border-radius:4px;
+}
+#volInfoOverlay .vio-item{display:inline-flex;align-items:center;gap:3px;}
+
+@media (max-width:560px){
+  #pgChart{overflow-x:hidden;}
+  .chart-hdr{
+    padding:14px 12px 10px;
+    gap:11px;
+  }
+  .chart-main-item{font-size:15px;line-height:1.15;}
+  #chartCode{font-size:12px;}
+  #chartName{max-width:34vw;}
+  #chartName{font-size:29px;}
+  #chartPrice{font-size:29px;}
+  #chartDiff{font-size:11px;padding:6px 8px;}
+  #chartDiff.limit-up,
+  #chartDiff.limit-dn{padding:6px 8px;}
+  .tf-btn{
+    min-height:34px;
+    padding:6px 8px;
+    font-size:12px;
+  }
+  .chart-nav button{
+    min-height:34px;
+    padding:6px 12px;
+    font-size:12px;
+  }
+  .chart-info{
+    padding:7px 8px;
+    font-size:11px;
+  }
+  .ci-row{gap:9px;}
+  .ci-line{gap:9px;}
+  .ci-item .lbl{font-size:10px;}
+  .ci-item .val{font-size:11px;}
+  #kchartWrap{min-height:260px;}
+  #kchartMain{min-height:170px;}
+  #kchartVol{min-height:72px;}
+  #volInfoOverlay{
+    left:4px;right:4px;
+    max-width:calc(100% - 8px);
+    overflow:hidden;text-overflow:ellipsis;
+    gap:5px;font-size:9px;
+  }
+}
+
+@media (max-width:380px){
+  .chart-main-item{font-size:14px;}
+  #chartCode{font-size:11px;}
+  #chartName{max-width:30vw;}
+  #chartName{font-size:26px;}
+  #chartPrice{font-size:26px;}
+  .chart-kpis{gap:6px;}
+  .chart-kpi .kpi-val{font-size:11px;}
+  .chart-title{gap:4px;}
+  .tf-btn,.chart-nav button{padding:6px 10px;}
+}
+#volInfoOverlay .vio-item b{font-weight:700;}
 
 .krange-row{
   display:flex;align-items:center;gap:8px;
@@ -1018,7 +1270,7 @@ button{cursor:pointer;}
 /* ── FLOATING K-LINE NAV BUTTONS ── */
 #floatNav{
   position:fixed;right:14px;bottom:calc(var(--nav-h) + 20px + var(--safe-b));
-  display:flex;flex-direction:column;gap:8px;
+  display:none;flex-direction:column;gap:8px;
   z-index:90;touch-action:none;
   opacity:0.35;transition:opacity .3s;
 }
@@ -1048,6 +1300,9 @@ button{cursor:pointer;}
   <div class="hdr-logo">看盤<em>PRO</em></div>
   <div class="hdr-status" id="dbStatus">尚未載入資料庫</div>
   <div class="hdr-actions">
+    <button id="themeToggle" class="hdr-btn theme" type="button" aria-label="Toggle theme" title="Toggle theme">
+      <i class="fa-solid fa-sun" aria-hidden="true"></i>
+    </button>
     <select id="dateSelect" class="hdr-btn" disabled></select>
     <label class="hdr-btn acc" for="dbFiles"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>載入</label>
     <input type="file" id="dbFiles" accept=".db" multiple>
@@ -1269,6 +1524,7 @@ button{cursor:pointer;}
           <div class="empty-sub">點擊右上角「載入」上傳 .db 檔<br>支援多檔同時選取</div>
         </div>
       </div>
+      <button class="rank-filter-fab" id="rankFilterFab" type="button" aria-label="開關篩選列">篩</button>
     </div><!-- /rankDetail -->
 
   </div>
@@ -1276,11 +1532,27 @@ button{cursor:pointer;}
   <!-- ═══ PAGE: CHART ═══ -->
   <div class="page" id="pgChart">
     <div class="chart-hdr">
-      <div class="chart-title" id="chartTitle">
-        <span id="chartName">選擇股票</span>
-        <span class="code" id="chartCode"></span>
+      <div class="chart-stock-row">
+        <div class="chart-title" id="chartTitle">
+          <span class="chart-main-item" id="chartName">選擇股票</span>
+          <span class="chart-main-item" id="chartPrice">--</span>
+          <span class="chart-main-item" id="chartDiff">--</span>
+          <span class="chart-main-item" id="chartPct">--</span>
+          <span class="chart-main-item" id="chartCode"></span>
+        </div>
+        <button id="chartWatchToggle" class="chart-watch-btn" type="button">☆ 加入自選</button>
+      </div>
+      <div class="chart-kpis">
+        <div class="chart-kpi"><span class="kpi-lbl">開</span><span class="kpi-val" id="chartOpen">--</span></div>
+        <div class="chart-kpi"><span class="kpi-lbl">高</span><span class="kpi-val" id="chartHigh">--</span></div>
+        <div class="chart-kpi"><span class="kpi-lbl">低</span><span class="kpi-val" id="chartLow">--</span></div>
+        <div class="chart-kpi"><span class="kpi-lbl">收</span><span class="kpi-val" id="chartClose">--</span></div>
+        <div class="chart-kpi"><span class="kpi-lbl">量</span><span class="kpi-val" id="chartVol">--</span></div>
       </div>
       <div class="tf-seg">
+        <button class="tf-btn" type="button" disabled>分時</button>
+        <button class="tf-btn" type="button" disabled>1分</button>
+        <button class="tf-btn" type="button" disabled>5分</button>
         <button class="tf-btn active" data-tf="D">日</button>
         <button class="tf-btn" data-tf="W">週</button>
         <button class="tf-btn" data-tf="M">月</button>
@@ -1293,7 +1565,13 @@ button{cursor:pointer;}
     <div class="chart-info" id="chartInfo">
       <div class="ci-row" id="ciRow" style="color:var(--txt3)">選擇股票後顯示 K 線資訊</div>
     </div>
-    <div id="kchart" style="position:relative;flex:1;min-height:280px;background:var(--bg);">
+    <div id="kchartWrap">
+      <div id="kchartMain">
+        <div id="kTooltip"></div>
+      </div>
+      <div id="kchartVol">
+        <div id="volInfoOverlay"></div>
+      </div>
     </div>
     <div class="krange-row">
       <span class="lbl">K線範圍</span>
@@ -1461,8 +1739,25 @@ button{cursor:pointer;}
     </div>
     <!-- Heatmap -->
     <div class="stats-section" id="statsHeatmapSection" style="display:none;padding-left:0;padding-right:0;">
-      <div class="stats-title" style="padding-left:16px;"><i class="bi bi-activity"></i> 個股成交量排行熱力圖</div>
+      <div class="stats-title" style="padding-left:16px;display:flex;align-items:center;gap:8px;">
+        <i class="bi bi-activity"></i> 個股成交量排行熱力圖
+        <span class="hm-title-sub" id="hmTitleSub">--</span>
+      </div>
       <div class="stats-card" style="border-radius:0;border-left:none;border-right:none;overflow:hidden;">
+        <div class="hm-toolbar">
+          <div class="hm-tb-group">
+            <span class="hm-tb-label">TOP</span>
+            <button class="hm-chip active" data-topn="30">30</button>
+            <button class="hm-chip" data-topn="60">60</button>
+            <button class="hm-chip" data-topn="100">100</button>
+            <button class="hm-chip" data-topn="200">200</button>
+          </div>
+          <div class="hm-tb-group">
+            <span class="hm-tb-label">排序</span>
+            <button class="hm-chip active" data-size="volume">量</button>
+            <button class="hm-chip" data-size="value">額</button>
+          </div>
+        </div>
         <div class="heatmap-wrap">
           <div id="heatmapChart"></div>
         </div>
@@ -1629,6 +1924,7 @@ const chainSubMap=new Map(); // code -> [{i,s}, ...]
 let chainLoaded=false;
 
 const WATCHLIST_STORAGE_KEY='lv3_watchlist_codes_v1';
+const THEME_STORAGE_KEY='dbman_theme_v1';
 
 // ════════════════════════════════════════════════
 // UTILS
@@ -1636,6 +1932,7 @@ const WATCHLIST_STORAGE_KEY='lv3_watchlist_codes_v1';
 const $=(s)=>document.querySelector(s);
 const byId=(id)=>document.getElementById(id);
 const fmt=(n,d=2)=>(n==null||isNaN(n))?'':Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtPx=(n)=>(n==null||isNaN(n))?'':fmt(n).replace(/0$/,'');
 const fmtInt=(n)=>(n==null||isNaN(n))?'':Math.round(Number(n)).toLocaleString();
 const toNum=(x)=>{
   if(x===null||x===undefined) return null;
@@ -1704,6 +2001,37 @@ function showToast(msg,type='',dur=2000){
 const showOverlay=(m)=>{byId('ovText').textContent=m;byId('overlay').classList.add('show');};
 const hideOverlay=()=>byId('overlay').classList.remove('show');
 
+function applyTheme(mode, persist=true){
+  const theme=(mode==='light')?'light':'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  if(persist){
+    try{ localStorage.setItem(THEME_STORAGE_KEY, theme); }catch(e){}
+  }
+  const btn=byId('themeToggle');
+  if(btn){
+    const isLight=theme==='light';
+    btn.innerHTML=`<i class="fa-solid ${isLight?'fa-moon':'fa-sun'}" aria-hidden="true"></i>`;
+    const title=isLight?'Switch to dark mode':'Switch to light mode';
+    btn.setAttribute('title', title);
+    btn.setAttribute('aria-label', title);
+  }
+  const metaTheme=document.querySelector('meta[name="theme-color"]');
+  if(metaTheme) metaTheme.setAttribute('content', theme==='light' ? '#f4f6fb' : '#000000');
+}
+function initTheme(){
+  let saved=null;
+  try{ saved=localStorage.getItem(THEME_STORAGE_KEY); }catch(e){}
+  if(saved!=='light' && saved!=='dark'){
+    const prefersLight=window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    saved=prefersLight ? 'light' : 'dark';
+  }
+  applyTheme(saved, false);
+}
+function toggleTheme(){
+  const current=document.documentElement.getAttribute('data-theme')==='light' ? 'light' : 'dark';
+  applyTheme(current==='light' ? 'dark' : 'light');
+}
+
 // ════════════════════════════════════════════════
 // PAGE NAVIGATION
 // ════════════════════════════════════════════════
@@ -1749,12 +2077,17 @@ function saveWatchlistCodes(codes){
 const isWatchlisted=(code)=>code?loadWatchlistCodes().includes(String(code).trim()):false;
 function updateWatchButtons(){
   const addBtn=byId('watchAddBtn'),rmBtn=byId('watchRemoveBtn'),clrBtn=byId('watchClearBtn');
-  if(!addBtn||!rmBtn||!clrBtn)return;
   const code=lastSymbol?String(lastSymbol).trim():'';
   const has=code?isWatchlisted(code):false;
-  addBtn.disabled=!code||has;
-  rmBtn.disabled=!code||!has;
-  clrBtn.disabled=loadWatchlistCodes().length===0;
+  if(addBtn)addBtn.disabled=!code||has;
+  if(rmBtn)rmBtn.disabled=!code||!has;
+  if(clrBtn)clrBtn.disabled=loadWatchlistCodes().length===0;
+  const chartBtn=byId('chartWatchToggle');
+  if(chartBtn){
+    chartBtn.disabled=!code;
+    chartBtn.classList.toggle('on',has);
+    chartBtn.textContent=has?'★ 已加入自選':'☆ 加入自選';
+  }
 }
 
 // ════════════════════════════════════════════════
@@ -2689,29 +3022,68 @@ function pctToHeatColor(pct){
   return'#0d5c2d';
 }
 
+let _hmState={topN:30, sizeBy:'volume'};
+let _hmLastRows=null;
+function _fmtVolK(v){
+  const lots=Math.round((v||0)/1000);
+  if(lots>=10000) return (lots/10000).toFixed(1)+'萬張';
+  if(lots>=1000) return (lots/1000).toFixed(1)+'千張';
+  return lots.toLocaleString()+'張';
+}
+function _fmtMoney(v){
+  if(v>=1e12) return (v/1e12).toFixed(2)+'兆';
+  if(v>=1e8) return (v/1e8).toFixed(2)+'億';
+  if(v>=1e4) return (v/1e4).toFixed(2)+'萬';
+  return Math.round(v||0).toLocaleString();
+}
 function renderHeatmap(rows){
   const el=byId('heatmapChart');
   if(!el)return;
-  // sort rows by volume descending and take top 60, already filtered for non-index
-  const sorted=[...rows].sort((a,b)=>(b.volume||0)-(a.volume||0)).slice(0,60);
-  const maxVol=Math.max(...sorted.map(r=>r.volume||0),1);
+  _hmLastRows=rows;
+  const topN=_hmState.topN||30;
+  const sizeBy=_hmState.sizeBy||'volume';
+  const sizeOf=(r)=>sizeBy==='value' ? ((+r.close||0)*(+r.volume||0)) : (+r.volume||0);
+  const sorted=[...rows].sort((a,b)=>sizeOf(b)-sizeOf(a)).slice(0,topN);
   const data=sorted.map(r=>{
-    const pct=r.pct||0;
-    const displayName=(r.name||r.code).slice(0,5);
-    const pctStr=(pct>=0?'+':'')+pct.toFixed(1)+'%';
+    const pct=+r.pct||0;
     return {
       name:r.name||r.code,
-      value:r.volume||0,
+      value:sizeOf(r),
       code:r.code,
+      close:+r.close||0,
+      diff:+r.chg||0,
+      volume:+r.volume||0,
+      turnover:(+r.close||0)*(+r.volume||0),
       pct:pct,
-      displayName:displayName,
-      pctStr:pctStr,
+      displayName:(r.name||r.code).slice(0,5),
+      pctStr:(pct>=0?'+':'')+pct.toFixed(1)+'%',
       itemStyle:{color:pctToHeatColor(pct)}
     };
   });
+  const sub=byId('hmTitleSub');
+  if(sub) sub.textContent='TOP '+topN+' / '+(sizeBy==='value'?'額':'量');
   let chart = echarts.getInstanceByDom(el);
   if(!chart) chart = echarts.init(el);
   const option={
+    tooltip:{
+      trigger:'item',
+      backgroundColor:'transparent',
+      borderWidth:0,
+      padding:0,
+      formatter:function(p){
+        const d=p.data||{};
+        const upDn=d.pct>0?'up':(d.pct<0?'dn':'');
+        const sign=d.pct>0?'+':'';
+        const diffSign=d.diff>0?'+':'';
+        return '<div class="hm-tip">'
+          +'<span class="hm-tip-name">'+(d.name||'')+' <span style="color:var(--txt3);font-weight:500;font-size:11px;">'+(d.code||'')+'</span></span>'
+          +'<div class="hm-tip-row"><span class="hm-tip-lbl">收盤</span><span style="font-family:var(--mono);">'+(d.close?d.close.toFixed(2):'--')+'</span></div>'
+          +'<div class="hm-tip-row"><span class="hm-tip-lbl">漲跌</span><span class="'+upDn+'" style="font-family:var(--mono);font-weight:700;">'+diffSign+(d.diff?d.diff.toFixed(2):'0.00')+' ('+sign+d.pct.toFixed(2)+'%)</span></div>'
+          +'<div class="hm-tip-row"><span class="hm-tip-lbl">成交量</span><span style="font-family:var(--mono);">'+_fmtVolK(d.volume)+'</span></div>'
+          +'<div class="hm-tip-row"><span class="hm-tip-lbl">成交額</span><span style="font-family:var(--mono);">'+_fmtMoney(d.turnover)+'</span></div>'
+          +'</div>';
+      }
+    },
     series:[{
       type:'treemap',
       roam:false,
@@ -2735,21 +3107,11 @@ function renderHeatmap(rows){
         overflow:'truncate',
         ellipsis:'…'
       },
-      itemStyle:{
-        borderColor:'rgba(0,0,0,.6)',
-        borderWidth:1.5,
-        gapWidth:1
-      },
-      levels:[{
-        itemStyle:{
-          borderColor:'rgba(0,0,0,.8)',
-          borderWidth:2,
-          gapWidth:2
-        }
-      }]
+      itemStyle:{borderColor:'rgba(0,0,0,.6)',borderWidth:1.5,gapWidth:1},
+      levels:[{itemStyle:{borderColor:'rgba(0,0,0,.8)',borderWidth:2,gapWidth:2}}]
     }]
   };
-  chart.setOption(option);
+  chart.setOption(option, true);
   chart.off('click');
   chart.on('click', params=>{
     const d=params.data;
@@ -2757,6 +3119,25 @@ function renderHeatmap(rows){
       showSymbol(d.code,d.name);
       switchPage('pgChart');
     }
+  });
+}
+
+function bindHmChips(){
+  document.querySelectorAll('.hm-chip[data-topn]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.hm-chip[data-topn]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      _hmState.topN=parseInt(btn.dataset.topn,10)||30;
+      if(_hmLastRows) renderHeatmap(_hmLastRows);
+    });
+  });
+  document.querySelectorAll('.hm-chip[data-size]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.hm-chip[data-size]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      _hmState.sizeBy=btn.dataset.size||'volume';
+      if(_hmLastRows) renderHeatmap(_hmLastRows);
+    });
   });
 }
 
@@ -3593,97 +3974,254 @@ async function fetchSeries(symbol){
   return out;
 }
 
+function updateChartHeaderQuote(series){
+  const codeEl=byId('chartCode');
+  const nameEl=byId('chartName');
+  const priceEl=byId('chartPrice');
+  const diffEl=byId('chartDiff');
+  const pctEl=byId('chartPct');
+  const openEl=byId('chartOpen');
+  const highEl=byId('chartHigh');
+  const lowEl=byId('chartLow');
+  const closeEl=byId('chartClose');
+  const volEl=byId('chartVol');
+  if(!codeEl||!nameEl||!priceEl||!diffEl||!pctEl) return;
+
+  const setState=(cls='',isLimitUp=false,isLimitDn=false)=>{
+    codeEl.className='chart-main-item';
+    nameEl.className='chart-main-item';
+    priceEl.className='chart-main-item'+(cls?` ${cls}`:'');
+    diffEl.className='chart-main-item'+(cls?` ${cls}`:'')+(isLimitUp?' limit-up':'')+(isLimitDn?' limit-dn':'');
+    pctEl.className='chart-main-item';
+  };
+  const setKpi=(el,val,base)=>{
+    if(!el)return;
+    el.textContent=val==null?'--':fmtPx(val);
+    el.className='kpi-val '+(base==null?'flat':(val>base?'up':(val<base?'dn':'flat')));
+  };
+
+  if(!Array.isArray(series)||!series.length){
+    priceEl.textContent='--';
+    diffEl.textContent='--';
+    pctEl.textContent='--';
+    if(openEl)openEl.textContent='--';
+    if(highEl)highEl.textContent='--';
+    if(lowEl)lowEl.textContent='--';
+    if(closeEl)closeEl.textContent='--';
+    if(volEl)volEl.textContent='--';
+    setState('');
+    return;
+  }
+
+  const last=series[series.length-1];
+  const prev=series.length>1?series[series.length-2]:null;
+  const close=toNum(last.c);
+  const prevClose=prev?toNum(prev.c):null;
+  const chg=(close!=null&&prevClose!=null)?(close-prevClose):null;
+  const pct=(chg!=null&&prevClose)?(chg/prevClose*100):null;
+  const cls=(chg==null||chg===0)?'':(chg>0?'up':'dn');
+  const lim=dynamicLimit(last.date||currentDate||'9999-12-31')-0.1;
+  const isLimitUp=(pct!=null&&pct>=lim);
+  const isLimitDn=(pct!=null&&pct<=-lim);
+
+  priceEl.textContent=(close==null)?'--':fmtPx(close);
+  setKpi(openEl,toNum(last.o),prevClose);
+  setKpi(highEl,toNum(last.h),prevClose);
+  setKpi(lowEl,toNum(last.l),prevClose);
+  setKpi(closeEl,close,prevClose);
+  if(volEl){volEl.textContent=fmtInt(Math.round((last.v||0)/1000))+'張';volEl.className='kpi-val flat';}
+  if(chg==null||pct==null){
+    diffEl.textContent='--';
+  }else{
+    const arrow=chg>0?'▲':(chg<0?'▼':'■');
+    diffEl.textContent=`${arrow}${fmtPx(Math.abs(chg))}(${fmtPx(Math.abs(pct))}%)`;
+  }
+  pctEl.textContent='--';
+  setState(cls,isLimitUp,isLimitDn);
+}
+
 async function showSymbol(code,name){
   lastSymbol=code;lastName=name;
   byId('chartName').textContent=name;
   byId('chartCode').textContent=code;
+  updateChartHeaderQuote(null);
   const daily=await fetchSeries(code);
   if(!daily.length){showToast('無 K 線資料','err');return;}
   const series=resample(daily,timeframe);
+  updateChartHeaderQuote(series);
   const dates=series.map(x=>x.date);
-  const ohlc=series.map(x=>[x.o,x.c,x.l,x.h]);
-  const volsData=series.map(d=>({value:Math.round((d.v||0)/1000),itemStyle:{color:d.c>=d.o?'#ff3b30':'#32d74b'}}));
-  const ma5=computeMA(series,5),ma10=computeMA(series,10),ma20=computeMA(series,20);
-  overlayData={series,dates,ma5,ma10,ma20};
-  const markerX=getMarkerX();
-  const markerData=(markerX&&dates.includes(markerX))?[{xAxis:markerX}]:[];
-  const kEl=byId('kchart');
-  if(!chart){
-    chart=echarts.init(kEl,null,{renderer:'canvas'});
-    chart.on('dataZoom',()=>{const opt=chart.getOption();const dz=(opt.dataZoom||[])[0];if(dz&&typeof dz.start==='number'){zoomState.start=dz.start;zoomState.end=dz.end;}});
-    chart.on('updateAxisPointer',p=>{
-      const i=p.axesInfo&&p.axesInfo[0]?p.axesInfo[0].value:null;
-      if(i!=null)updateChartInfo(i);
-    });
-    window.addEventListener('resize',()=>{if(chart)chart.resize();});
+  const ma5=computeMA(series,5),ma10=computeMA(series,10),ma20=computeMA(series,20),ma60=computeMA(series,60);
+  const volsArr=series.map(d=>Math.round((d.v||0)/1000));
+  const computeArrMA=(arr,n)=>{const out=new Array(arr.length).fill(null);let sum=0;const q=[];for(let i=0;i<arr.length;i++){const v=arr[i]||0;sum+=v;q.push(v);if(q.length>n)sum-=q.shift();if(q.length===n)out[i]=Math.round(sum/n);}return out;};
+  const volMa4=computeArrMA(volsArr,4), volMa60=computeArrMA(volsArr,60);
+  overlayData={series,dates,ma5,ma10,ma20,ma60,volMa4,volMa60};
+
+  initLwcCharts();
+  if(!lwc){showToast('圖表引擎載入失敗','err');return;}
+
+  const candleData=series.map(d=>({time:d.date,open:+d.o,high:+d.h,low:+d.l,close:+d.c}));
+  lwc.candle.setData(candleData);
+  const lineData=(arr)=>arr.map((v,i)=>v==null?null:({time:dates[i],value:+v})).filter(Boolean);
+  lwc.ma5.setData(lineData(ma5));
+  lwc.ma10.setData(lineData(ma10));
+  lwc.ma20.setData(lineData(ma20));
+  lwc.ma60.setData(lineData(ma60));
+  lwc.volHist.setData(series.map((d,i)=>({
+    time:d.date,
+    value:volsArr[i],
+    color:d.c>=d.o?'rgba(255,59,48,.55)':'rgba(50,215,75,.55)'
+  })));
+  lwc.vma4.setData(lineData(volMa4));
+  lwc.vma60.setData(lineData(volMa60));
+
+  let maxIdx=0,minIdx=0;
+  for(let i=1;i<series.length;i++){
+    if(series[i].h>series[maxIdx].h) maxIdx=i;
+    if(series[i].l<series[minIdx].l) minIdx=i;
   }
-  chart.setOption({
-    backgroundColor:'transparent',animation:true,
-    title:{text:'',left:0,top:0},
-    tooltip:{
-      trigger:'axis',
-      axisPointer:{type:'cross'},
-      backgroundColor:'rgba(0,0,0,.9)',borderColor:'rgba(246,196,69,.4)',borderWidth:1,
-      textStyle:{color:'#e5e7eb',fontSize:12},
-      formatter:(params)=>{
-        if(!params||!params.length||!overlayData)return'';
-        const k=params.find(p=>p.seriesType==='candlestick');if(!k)return'';
-        const idx=k.dataIndex,d=overlayData.series[idx];if(!d)return'';
-        const prev=overlayData.series[idx-1];
-        const chg=prev?d.c-prev.c:0,pct=prev&&prev.c?(d.c/prev.c-1)*100:0;
-        const volP=params.find(p=>p.seriesType==='bar');
-        const volVal=volP?volP.data.value:Math.round((d.v||0)/1000);
-        const c=chg>=0?'#ff3b30':'#32d74b';
-        updateChartInfo(idx);
-        return `<b>${overlayData.dates[idx]}</b><br>開<b style="color:${c}">${fmt(d.o)}</b> 高<b style="color:${c}">${fmt(d.h)}</b> 低<b style="color:${c}">${fmt(d.l)}</b> 收<b style="color:${c}">${fmt(d.c)}</b><br>漲跌<b style="color:${c}">${chg>=0?'+':''}${fmt(chg)}</b>（${pct>=0?'+':''}${fmt(pct)}%）<br>量${fmtInt(volVal)}張`;
-      }
-    },
-    grid:[{left:50,right:10,top:8,height:'66%'},{left:50,right:10,top:'78%',height:'16%'}],
-    xAxis:[
-      {type:'category',data:dates,boundaryGap:true,axisLine:{lineStyle:{color:'#2a2a2a'}},axisLabel:{color:'#666',fontSize:10}},
-      {type:'category',data:dates,gridIndex:1,axisLine:{lineStyle:{color:'#2a2a2a'}},axisLabel:{color:'#666',fontSize:10}}
-    ],
-    yAxis:[
-      {scale:true,axisLine:{lineStyle:{color:'#2a2a2a'}},axisLabel:{color:'#888',fontSize:11},splitLine:{lineStyle:{color:'rgba(255,255,255,.04)'}}},
-      {gridIndex:1,axisLine:{lineStyle:{color:'#2a2a2a'}},axisLabel:{color:'#888',fontSize:10},splitLine:{lineStyle:{color:'rgba(255,255,255,.04)'}}}
-    ],
-    dataZoom:[
-      {type:'inside',xAxisIndex:[0,1],start:zoomState.start,end:zoomState.end},
-      {type:'slider',xAxisIndex:[0,1],height:16,bottom:0,start:zoomState.start,end:zoomState.end,
-       fillerColor:'rgba(246,196,69,.08)',borderColor:'transparent',handleStyle:{color:'rgba(246,196,69,.6)'},textStyle:{color:'#555',fontSize:9}}
-    ],
-    series:[
-      {type:'candlestick',name:'K',data:ohlc,
-       itemStyle:{color:'#ff3b30',color0:'#32d74b',borderColor:'#ff3b30',borderColor0:'#32d74b'},
-       markLine:{symbol:['none','none'],label:{show:markerData.length>0,formatter:'選擇日',color:'#f6c445',fontSize:10},lineStyle:{type:'dashed',width:1,color:'#f6c445'},data:markerData}},
-      {type:'line',name:'MA5',data:ma5,showSymbol:false,smooth:false,lineStyle:{color:'#f6c445',width:1.2}},
-      {type:'line',name:'MA10',data:ma10,showSymbol:false,smooth:false,lineStyle:{color:'#00bfff',width:1.2}},
-      {type:'line',name:'MA20',data:ma20,showSymbol:false,smooth:false,lineStyle:{color:'#ff9800',width:1.2}},
-      {type:'bar',name:'量',xAxisIndex:1,yAxisIndex:1,data:volsData}
-    ]
-  },true);
+  const markerX=getMarkerX();
+  const markers=[
+    {time:dates[maxIdx],position:'aboveBar',color:'#ff6b9d',shape:'arrowDown',text:'高 '+fmtPx(series[maxIdx].h)},
+    {time:dates[minIdx],position:'belowBar',color:'#4aa3ff',shape:'arrowUp',text:'低 '+fmtPx(series[minIdx].l)}
+  ];
+  if(markerX&&dates.includes(markerX)) markers.push({time:markerX,position:'belowBar',color:'#f6c445',shape:'circle',text:'選取'});
+  markers.sort((a,b)=>a.time<b.time?-1:(a.time>b.time?1:0));
+  lwc.candle.setMarkers(markers);
+
+  if(_lwcNeedsInit || _lwcLastTf!==timeframe){
+    const total=candleData.length;
+    if(total>0){
+      const N=60,rightPad=5;
+      try{lwc.main.timeScale().setVisibleLogicalRange({from:Math.max(0,total-N),to:total-1+rightPad});}catch(e){}
+    }
+    _lwcNeedsInit=false;
+    _lwcLastTf=timeframe;
+  }
   updateChartInfo(series.length-1);
+}
+
+let _lwcNeedsInit=true;
+let _lwcLastTf=null;
+let lwc=null;
+function initLwcCharts(){
+  if(lwc||typeof LightweightCharts==='undefined') return;
+  const mainEl=byId('kchartMain'), volEl=byId('kchartVol');
+  if(!mainEl||!volEl) return;
+
+  const common={
+    layout:{background:{type:'solid',color:'transparent'},textColor:'#9aa0a6',fontSize:11,fontFamily:'SF Mono, Menlo, Cascadia Code, monospace'},
+    grid:{vertLines:{color:'rgba(255,255,255,.04)'},horzLines:{color:'rgba(255,255,255,.04)'}},
+    crosshair:{
+      mode:LightweightCharts.CrosshairMode.Normal,
+      vertLine:{color:'rgba(246,196,69,.5)',width:1,style:LightweightCharts.LineStyle.Dashed,labelBackgroundColor:'#1c1c1e'},
+      horzLine:{color:'rgba(246,196,69,.5)',width:1,style:LightweightCharts.LineStyle.Dashed,labelBackgroundColor:'#1c1c1e'}
+    },
+    rightPriceScale:{borderColor:'#2a2a2a',scaleMargins:{top:.06,bottom:.06}},
+    leftPriceScale:{visible:false},
+    timeScale:{borderColor:'#2a2a2a',rightOffset:3,barSpacing:6,fixLeftEdge:false,lockVisibleTimeRangeOnResize:true}
+  };
+
+  const mainChart=LightweightCharts.createChart(mainEl,{...common,width:mainEl.clientWidth||360,height:mainEl.clientHeight||360,timeScale:{...common.timeScale,visible:false}});
+  const volChart=LightweightCharts.createChart(volEl,{...common,width:volEl.clientWidth||360,height:volEl.clientHeight||120,rightPriceScale:{borderColor:'#2a2a2a',scaleMargins:{top:.08,bottom:.04}}});
+  const candle=mainChart.addCandlestickSeries({upColor:'#ff3b30',downColor:'#32d74b',borderUpColor:'#ff3b30',borderDownColor:'#32d74b',wickUpColor:'#ff3b30',wickDownColor:'#32d74b',priceLineColor:'rgba(246,196,69,.6)',priceLineStyle:LightweightCharts.LineStyle.Dashed});
+  const mkLine=(color)=>mainChart.addLineSeries({color,lineWidth:1,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false});
+  const ma5=mkLine('#f6c445'),ma10=mkLine('#ff6b9d'),ma20=mkLine('#b56cff'),ma60=mkLine('#9aa0a6');
+  const volHist=volChart.addHistogramSeries({priceFormat:{type:'volume'},priceLineVisible:false,lastValueVisible:false});
+  const mkVolLine=(color)=>volChart.addLineSeries({color,lineWidth:1,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false});
+  const vma4=mkVolLine('#f6c445'),vma60=mkVolLine('#9aa0a6');
+
+  let syncingTs=false;
+  mainChart.timeScale().subscribeVisibleLogicalRangeChange(r=>{if(syncingTs||!r)return;syncingTs=true;try{volChart.timeScale().setVisibleLogicalRange(r);}catch(e){}syncingTs=false;});
+  volChart.timeScale().subscribeVisibleLogicalRangeChange(r=>{if(syncingTs||!r)return;syncingTs=true;try{mainChart.timeScale().setVisibleLogicalRange(r);}catch(e){}syncingTs=false;});
+
+  const tooltipEl=byId('kTooltip');
+  const showTooltip=(param)=>{
+    if(!tooltipEl||!overlayData) return;
+    if(!param||!param.time||!param.point){tooltipEl.style.display='none';return;}
+    const idx=overlayData.dates.indexOf(param.time);
+    if(idx<0){tooltipEl.style.display='none';return;}
+    const d=overlayData.series[idx],prev=overlayData.series[idx-1];
+    if(!d){tooltipEl.style.display='none';return;}
+    const chg=prev?d.c-prev.c:0,pct=prev&&prev.c?(d.c/prev.c-1)*100:0;
+    const c=chg>=0?'#ff3b30':'#32d74b';
+    const volT=Math.round((d.v||0)/1000);
+    tooltipEl.innerHTML=`<span class="kt-date">${param.time}</span><div class="kt-row"><span><span class="kt-lbl">開</span> <span class="kt-val" style="color:${c}">${fmtPx(d.o)}</span></span><span><span class="kt-lbl">高</span> <span class="kt-val" style="color:${c}">${fmtPx(d.h)}</span></span></div><div class="kt-row"><span><span class="kt-lbl">低</span> <span class="kt-val" style="color:${c}">${fmtPx(d.l)}</span></span><span><span class="kt-lbl">收</span> <span class="kt-val" style="color:${c}">${fmtPx(d.c)}</span></span></div><div class="kt-row"><span class="kt-lbl">漲跌</span><span class="kt-val" style="color:${c}">${chg>=0?'+':'-'}${fmtPx(Math.abs(chg))} (${pct>=0?'+':'-'}${fmtPx(Math.abs(pct))}%)</span></div><div class="kt-row"><span class="kt-lbl">成交量</span><span class="kt-val">${fmtInt(volT)} 張</span></div>`;
+    const rect=mainEl.getBoundingClientRect();
+    const x=Math.min(Math.max(8,param.point.x+12),rect.width-190);
+    const y=Math.min(Math.max(8,param.point.y+12),rect.height-110);
+    tooltipEl.style.left=x+'px';
+    tooltipEl.style.top=y+'px';
+    tooltipEl.style.display='block';
+    updateChartInfo(idx);
+  };
+
+  let syncingCh=false;
+  const handleCh=(p,other,otherSeries,isMain)=>{
+    if(syncingCh)return;
+    syncingCh=true;
+    try{
+      if(p&&p.time){
+        other.setCrosshairPosition(NaN,p.time,otherSeries);
+        const idx=overlayData?overlayData.dates.indexOf(p.time):-1;
+        if(idx>=0)updateChartInfo(idx);
+        if(isMain)showTooltip(p);
+      }else{
+        other.clearCrosshairPosition();
+        if(isMain&&tooltipEl)tooltipEl.style.display='none';
+      }
+    }catch(e){}
+    syncingCh=false;
+  };
+  mainChart.subscribeCrosshairMove(p=>handleCh(p,volChart,volHist,true));
+  volChart.subscribeCrosshairMove(p=>handleCh(p,mainChart,candle,false));
+
+  lwc={main:mainChart,vol:volChart,candle,ma5,ma10,ma20,ma60,volHist,vma4,vma60};
+  const vio=byId('volInfoOverlay');if(vio)volEl.appendChild(vio);
+  const tt=byId('kTooltip');if(tt)mainEl.appendChild(tt);
+  const doResize=()=>{try{mainChart.applyOptions({width:mainEl.clientWidth,height:mainEl.clientHeight});}catch(e){}try{volChart.applyOptions({width:volEl.clientWidth,height:volEl.clientHeight});}catch(e){}};
+  chart={resize:doResize,_lwc:lwc};
+  window.addEventListener('resize',doResize);
+  try{const ro=new ResizeObserver(doResize);ro.observe(mainEl);ro.observe(volEl);}catch(e){}
 }
 
 function updateChartInfo(i){
   if(!overlayData)return;
-  const{series,dates,ma5,ma10,ma20}=overlayData;
+  const{series,dates,ma5,ma10,ma20,ma60,volMa4,volMa60}=overlayData;
   const d=series[i];if(!d)return;
   const prev=series[i-1];
   const chg=prev?d.c-prev.c:0,pct=prev&&prev.c?(d.c/prev.c-1)*100:0;
   const c=chg>=0?'var(--up)':'var(--dn)';
-  byId('ciRow').innerHTML=`
-    <span class="ci-item"><span class="lbl"><i class="bi bi-calendar3"></i></span><span class="val">${dates[i]}</span></span>
-    <span class="ci-item"><span class="lbl">開</span><span class="val" style="color:${c}">${fmt(d.o)}</span></span>
-    <span class="ci-item"><span class="lbl">高</span><span class="val" style="color:${c}">${fmt(d.h)}</span></span>
-    <span class="ci-item"><span class="lbl">低</span><span class="val" style="color:${c}">${fmt(d.l)}</span></span>
-    <span class="ci-item"><span class="lbl">收</span><span class="val" style="color:${c}">${fmt(d.c)}</span></span>
-    <span class="ci-item"><span class="lbl">漲</span><span class="val" style="color:${c}">${chg>=0?'+':''}${fmt(chg)}(${pct>=0?'+':''}${fmt(pct)}%)</span></span>
-    <span class="ci-item"><span class="lbl">量</span><span class="val">${fmtInt((d.v||0)/1000)}張</span></span>
-    <span class="ci-item" style="color:#f6c445"><span class="lbl">MA5</span><span class="val">${fmt(ma5[i])}</span></span>
-    <span class="ci-item" style="color:#00bfff"><span class="lbl">MA10</span><span class="val">${fmt(ma10[i])}</span></span>
-    <span class="ci-item" style="color:#ff9800"><span class="lbl">MA20</span><span class="val">${fmt(ma20[i])}</span></span>
-  `;
+  const cls=chg===0?'':(chg>0?'up':'dn');
+  const lim=dynamicLimit(d.date||dates[i]||currentDate||'9999-12-31')-0.1;
+  const isLimitUp=pct>=lim,isLimitDn=pct<=-lim;
+  const base=prev?toNum(prev.c):null;
+  const setKpi=(id,val,withLots=false)=>{
+    const el=byId(id);if(!el)return;
+    el.textContent=val==null?'--':(withLots?fmtInt(val)+'張':fmtPx(val));
+    el.className='kpi-val '+(withLots||base==null?'flat':(val>base?'up':(val<base?'dn':'flat')));
+  };
+  const priceEl=byId('chartPrice'),diffEl=byId('chartDiff');
+  if(priceEl){
+    priceEl.textContent=fmtPx(d.c);
+    priceEl.className='chart-main-item'+(cls?` ${cls}`:'');
+  }
+  if(diffEl){
+    const arrow=chg>0?'▲':(chg<0?'▼':'■');
+    diffEl.textContent=`${arrow}${fmtPx(Math.abs(chg))}(${fmtPx(Math.abs(pct))}%)`;
+    diffEl.className='chart-main-item'+(cls?` ${cls}`:'')+(isLimitUp?' limit-up':'')+(isLimitDn?' limit-dn':'');
+  }
+  setKpi('chartOpen',toNum(d.o));
+  setKpi('chartHigh',toNum(d.h));
+  setKpi('chartLow',toNum(d.l));
+  setKpi('chartClose',toNum(d.c));
+  const arrow=(arr)=>{if(!arr||arr[i]==null)return'';const p=arr[i-1];if(p==null)return'';return arr[i]>p?'<span style="color:var(--up)">↑</span>':(arr[i]<p?'<span style="color:var(--dn)">↓</span>':'');};
+  const maPart=(label,val,col,arr)=>`<span class="ci-ma" style="color:${col}">${label} <b>${val==null?'--':fmtPx(val)}</b>${arrow(arr)}</span>`;
+  const volArrow=(arr)=>{if(!arr||arr[i]==null)return'';const p=arr[i-1];if(p==null)return'';return arr[i]>p?'<span style="color:var(--up)">↑</span>':(arr[i]<p?'<span style="color:var(--dn)">↓</span>':'');};
+  const volT=Math.round((d.v||0)/1000);
+  setKpi('chartVol',volT,true);
+  byId('ciRow').innerHTML=`<div class="ci-line ci-line-ma"><span class="ci-ma-label">均線:</span>${maPart('SMA(5)',ma5[i],'#f6c445',ma5)}${maPart('SMA(10)',ma10[i],'#ff6b9d',ma10)}${maPart('SMA(20)',ma20[i],'#b56cff',ma20)}${maPart('SMA(60)',ma60[i],'#9aa0a6',ma60)}</div>`;
+  const vio=byId('volInfoOverlay');
+  if(vio){vio.innerHTML=`<span class="vio-item" style="color:var(--txt2)">成交量 <b>${fmtInt(volT)}張</b></span><span class="vio-item" style="color:#f6c445">MA(4) <b>${volMa4&&volMa4[i]!=null?fmtInt(volMa4[i]):'--'}</b>${volArrow(volMa4)}</span><span class="vio-item" style="color:#9aa0a6">MA(60) <b>${volMa60&&volMa60[i]!=null?fmtInt(volMa60[i]):'--'}</b>${volArrow(volMa60)}</span>`;}
 }
 
 function moveSelection(delta){
@@ -3712,6 +4250,7 @@ async function onFilesSelected(files){
   industryMap.clear();lastVolByCode.clear();baselineProcessedIdx=-1;dateIndexMap=new Map();
   weeklyRows=[];monthlyRows=[];weeklyForDate=null;monthlyForDate=null;
   watchlistRows=[];watchlistKey=null;
+  _lwcNeedsInit=true; _lwcLastTf=null;
   try{
     const SQLClass=await window.sqlJsReady;
     SQL=SQLClass;
@@ -3773,6 +4312,8 @@ const HUB_LABELS={
 function showHub(){
   byId('rankHub').style.display='flex';
   byId('rankDetail').classList.remove('active');
+  byId('filterBarTop')?.classList.remove('open');
+  byId('rankFilterFab')?.classList.remove('active');
 }
 
 const HUB_EN={
@@ -3793,6 +4334,8 @@ function enterDetail(type){
   sortState={key:null,dir:'desc'};
   byId('rankHub').style.display='none';
   byId('rankDetail').classList.add('active');
+  byId('filterBarTop')?.classList.remove('open');
+  byId('rankFilterFab')?.classList.remove('active');
   // Breadcrumb
   const cat=HUB_CATEGORY[type]||'排行';
   byId('detailBreadcrumb').textContent=`排行 / ${cat}`;
@@ -3925,6 +4468,9 @@ function _setHV(id,txt){const el=byId(id);if(el)el.textContent=txt;}
 // ════════════════════════════════════════════════
 // EVENT BINDINGS
 // ════════════════════════════════════════════════
+initTheme();
+byId('themeToggle')?.addEventListener('click',toggleTheme);
+bindHmChips();
 byId('dbFiles').addEventListener('change',e=>onFilesSelected(e.target.files));
 
 // Drag and drop
@@ -3987,6 +4533,21 @@ byId('watchRemoveBtn').addEventListener('click',async()=>{
   updateWatchButtons();showToast('已移除','');
   if(activePage==='pgWatch')renderWatchlist();
 });
+byId('chartWatchToggle')?.addEventListener('click',async()=>{
+  if(!lastSymbol)return;
+  const codes=loadWatchlistCodes();
+  if(codes.includes(lastSymbol)){
+    saveWatchlistCodes(codes.filter(c=>c!==lastSymbol));
+    showToast('已移除','');
+  }else{
+    codes.push(lastSymbol);
+    saveWatchlistCodes(codes);
+    showToast('已加入自選股','ok');
+  }
+  watchlistRows=[];watchlistKey=null;
+  updateWatchButtons();
+  if(activePage==='pgWatch')renderWatchlist();
+});
 byId('watchClearBtn').addEventListener('click',async()=>{
   saveWatchlistCodes([]);watchlistRows=[];watchlistKey=null;
   updateWatchButtons();showToast('已清空自選股');
@@ -4009,6 +4570,15 @@ byId('resetBtn').addEventListener('click',()=>{
 // Settings inputs live update
 ['priceMin','priceMax','volMin','volMax'].forEach(id=>{
   byId(id)?.addEventListener('input',()=>renderBoard(currentBoard));
+});
+
+// Rank detail floating quick filter panel
+byId('rankFilterFab')?.addEventListener('click',()=>{
+  const panel=byId('filterBarTop');
+  const btn=byId('rankFilterFab');
+  if(!panel||!btn)return;
+  const isOpen=panel.classList.toggle('open');
+  btn.classList.toggle('active',isOpen);
 });
 
 // Filter drawer toggle
@@ -4071,6 +4641,7 @@ byId('drawerReset').addEventListener('click',()=>{
   window._floatNavSetPage=function(id){
     nav.style.display=(id==='pgChart')?'flex':'none';
   };
+  window._floatNavSetPage(activePage);
 })();
 
 // ── CHAIN DB LOADER (載入產業鏈 .db) ──
