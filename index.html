@@ -64,7 +64,7 @@
   --r8:      8px;
   --r12:     12px;
   --r16:     16px;
-  --nav-h:   72px;
+  --nav-h:   58px;
   --hdr-h:   52px;
   --safe-t:  env(safe-area-inset-top,0px);
   --safe-b:  env(safe-area-inset-bottom,0px);
@@ -160,10 +160,10 @@ button{cursor:pointer;}
 }
 .nb{
   flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:3px;
+  align-items:center;justify-content:center;gap:2px;
   color:var(--txt3);border:none;background:none;
-  font-family:var(--sans);padding-top:8px;
-  min-height:52px;
+  font-family:var(--sans);padding-top:4px;
+  min-height:46px;
   position:relative;transition:color .15s;
 }
 .nb.active{color:var(--acc);}
@@ -171,9 +171,9 @@ button{cursor:pointer;}
   content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
   width:28px;height:2px;background:var(--acc);border-radius:0 0 2px 2px;
 }
-.nb svg{width:22px;height:22px;}
-.nb .fa-solid{font-size:20px;line-height:1;}
-.nb span{font-size:11px;font-weight:700;letter-spacing:.3px;}
+.nb svg{width:20px;height:20px;}
+.nb .fa-solid{font-size:18px;line-height:1;}
+.nb span{font-size:10px;font-weight:700;letter-spacing:.2px;}
 
 /* ── APP AREA ── */
 #app{
@@ -181,6 +181,11 @@ button{cursor:pointer;}
   top:calc(var(--hdr-h) + var(--safe-t));
   bottom:var(--nav-h);
   overflow:hidden;
+}
+body.chart-page #hdr{display:none;}
+body.chart-page #app{
+  top:0;
+  bottom:calc(var(--nav-h) + var(--safe-b));
 }
 .page{
   position:absolute;inset:0;overflow-y:auto;
@@ -711,7 +716,7 @@ button{cursor:pointer;}
 .empty-sub{font-size:12px;color:var(--txt3);text-align:center;line-height:1.5;}
 
 /* ── PAGE: CHART ── */
-#pgChart{background:var(--bg);}
+#pgChart{background:var(--bg);padding-top:calc(var(--safe-t) + 4px);}
 .chart-hdr{
   display:flex;flex-direction:column;gap:12px;
   padding:14px 14px 10px;background:var(--bg1);
@@ -754,7 +759,7 @@ button{cursor:pointer;}
   font-family:'Noto Sans TC','Microsoft JhengHei','Heiti TC',sans-serif;
 }
 #chartName{
-  font-size:30px;font-weight:900;letter-spacing:.2px;line-height:1;
+  font-size:var(--chart-name-fs,30px);font-weight:900;letter-spacing:.2px;line-height:1;
 }
 #chartPrice{
   font-size:30px;font-weight:900;letter-spacing:.5px;line-height:1;
@@ -873,25 +878,31 @@ button{cursor:pointer;}
 @media (max-width:560px){
   #pgChart{overflow-x:hidden;}
   .chart-hdr{
-    padding:14px 12px 10px;
-    gap:11px;
+    padding:12px 14px 9px;
+    gap:9px;
   }
-  .chart-main-item{font-size:15px;line-height:1.15;}
-  #chartCode{font-size:12px;}
-  #chartName{max-width:34vw;}
-  #chartName{font-size:29px;}
-  #chartPrice{font-size:29px;}
-  #chartDiff{font-size:11px;padding:6px 8px;}
+  .chart-stock-row{gap:6px;}
+  .chart-title{line-height:1.18;}
+  .chart-main-item{font-size:14px;line-height:1.18;}
+  #chartCode{font-size:11px;}
+  #chartName{max-width:33vw;}
+  #chartName{--chart-name-fs:24px;}
+  #chartPrice{font-size:24px;}
+  #chartDiff{font-size:11px;padding:5px 7px;align-self:center;}
   #chartDiff.limit-up,
-  #chartDiff.limit-dn{padding:6px 8px;}
+  #chartDiff.limit-dn{padding:5px 7px;}
+  .chart-kpis{gap:6px;padding-top:1px;}
+  .chart-kpi .kpi-lbl{font-size:9px;line-height:1.35;margin-bottom:4px;}
+  .chart-kpi .kpi-val{font-size:12px;line-height:1.2;}
+  .tf-seg{margin-top:1px;}
   .tf-btn{
-    min-height:34px;
-    padding:6px 8px;
-    font-size:12px;
+    min-height:30px;
+    padding:5px 7px;
+    font-size:11px;
   }
   .chart-nav button{
-    min-height:34px;
-    padding:6px 12px;
+    min-height:30px;
+    padding:5px 10px;
     font-size:12px;
   }
   .chart-info{
@@ -917,12 +928,12 @@ button{cursor:pointer;}
   .chart-main-item{font-size:14px;}
   #chartCode{font-size:11px;}
   #chartName{max-width:30vw;}
-  #chartName{font-size:26px;}
-  #chartPrice{font-size:26px;}
-  .chart-kpis{gap:6px;}
+  #chartName{--chart-name-fs:22px;}
+  #chartPrice{font-size:22px;}
+  .chart-kpis{gap:4px;}
   .chart-kpi .kpi-val{font-size:11px;}
   .chart-title{gap:4px;}
-  .tf-btn,.chart-nav button{padding:6px 10px;}
+  .tf-btn,.chart-nav button{padding:5px 8px;}
 }
 #volInfoOverlay .vio-item b{font-weight:700;}
 
@@ -2037,6 +2048,7 @@ function toggleTheme(){
 // ════════════════════════════════════════════════
 function switchPage(id){
   if(activePage===id)return;
+  document.body.classList.toggle('chart-page', id==='pgChart');
   const prev=activePage?byId(activePage):document.querySelector('.page.active');
   if(prev&&prev.id!==id){
     prev.classList.remove('active');
@@ -2051,7 +2063,7 @@ function switchPage(id){
   });
   byId(id).classList.add('active');
   activePage=id;
-  if(id==='pgChart') setTimeout(()=>{if(chart)chart.resize();},50);
+  if(id==='pgChart') setTimeout(()=>{if(chart)chart.resize();scheduleFitChartName();},80);
   if(id==='pgStats'){renderStats();setTimeout(()=>{if(sectorBarChart)sectorBarChart.resize();},80);}
   if(window._floatNavSetPage)window._floatNavSetPage(id);
 }
@@ -4038,12 +4050,33 @@ function updateChartHeaderQuote(series){
   }
   pctEl.textContent='--';
   setState(cls,isLimitUp,isLimitDn);
+  scheduleFitChartName();
+}
+
+function fitChartName(){
+  const el=byId('chartName');
+  if(!el||!el.textContent.trim())return;
+  el.style.removeProperty('--chart-name-fs');
+  if(!el.clientWidth)return;
+  const base=parseFloat(getComputedStyle(el).fontSize)||24;
+  const min=14;
+  let size=base;
+  while(size>min&&el.scrollWidth>el.clientWidth+1){
+    size-=1;
+    el.style.setProperty('--chart-name-fs',size+'px');
+  }
+}
+function scheduleFitChartName(){
+  fitChartName();
+  requestAnimationFrame(fitChartName);
+  setTimeout(fitChartName,80);
 }
 
 async function showSymbol(code,name){
   lastSymbol=code;lastName=name;
   byId('chartName').textContent=name;
   byId('chartCode').textContent=code;
+  scheduleFitChartName();
   updateChartHeaderQuote(null);
   const daily=await fetchSeries(code);
   if(!daily.length){showToast('無 K 線資料','err');return;}
@@ -4178,7 +4211,7 @@ function initLwcCharts(){
   lwc={main:mainChart,vol:volChart,candle,ma5,ma10,ma20,ma60,volHist,vma4,vma60};
   const vio=byId('volInfoOverlay');if(vio)volEl.appendChild(vio);
   const tt=byId('kTooltip');if(tt)mainEl.appendChild(tt);
-  const doResize=()=>{try{mainChart.applyOptions({width:mainEl.clientWidth,height:mainEl.clientHeight});}catch(e){}try{volChart.applyOptions({width:volEl.clientWidth,height:volEl.clientHeight});}catch(e){}};
+  const doResize=()=>{try{mainChart.applyOptions({width:mainEl.clientWidth,height:mainEl.clientHeight});}catch(e){}try{volChart.applyOptions({width:volEl.clientWidth,height:volEl.clientHeight});}catch(e){}scheduleFitChartName();};
   chart={resize:doResize,_lwc:lwc};
   window.addEventListener('resize',doResize);
   try{const ro=new ResizeObserver(doResize);ro.observe(mainEl);ro.observe(volEl);}catch(e){}
